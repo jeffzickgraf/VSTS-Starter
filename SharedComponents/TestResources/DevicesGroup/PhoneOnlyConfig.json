@@ -1,0 +1,18 @@
+{
+  "devices": [
+    {
+      "device": {
+        "deviceID": "05157DF53B1BA11F",
+        "os": "Android",
+        "name": "Galaxy6"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "AA7EEEAADD92242C665D2807B538BDACFAA5A0DB",
+        "os": "iOS",
+        "name": "iPhone6s"
+      }
+    }
+  ]
+}

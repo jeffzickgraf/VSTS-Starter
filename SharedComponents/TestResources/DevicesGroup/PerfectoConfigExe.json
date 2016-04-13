@@ -1,0 +1,46 @@
+{
+  "devices": [    
+    {
+      "device": {
+        "deviceID": "AA7EEEAADD92242C665D2807B538BDACFAA5A0DB",
+        "os": "iOS",
+        "name": "iPhone6s",
+         "isDesktopBrowser": "false"
+      }
+    },
+    {
+      "device": {
+        "os": "windows",
+        "osVersion": "7",
+        "browserName": "Chrome",
+        "browserVersion": "49",
+        "name": "chrome",
+        "isDesktopBrowser": "true"
+      }
+    },    
+    {
+      "device": {
+        "deviceID": "3050BE36",
+        "os": "Android",
+        "name": "GalaxyS5",
+         "isDesktopBrowser": "false"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "HT58ZJT00147",
+        "os": "Android",
+        "name": "AndroidTablet",
+         "isDesktopBrowser": "false"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "95E0EEA907ECC690914C7ABE68786B3EDE4343DF",
+        "os": "iOS",
+        "name": "iPadAir2",
+         "isDesktopBrowser": "false"
+      }
+    }
+  ]
+}

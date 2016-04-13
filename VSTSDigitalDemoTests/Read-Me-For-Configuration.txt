@@ -1,0 +1,14 @@
+﻿The app.config contains a section for appSettings that points to an external file.
+
+Copy the following <appSettings> xml to a text file and place into the 
+PerfectoHelloWorld folder (same folder as app.config file) as "appsettings.config" 
+and then replace values with your information. 
+
+This methodology is used to keep your credentials out of source control.
+____________________________________________________________________________
+
+<appSettings>
+		<add key="PerfectoCloud" value="YOUR-CLOUD"/> 		<!--e.g. demo.PerfectoMobile.com -->
+		<add key="PerfectoUsername" value="YOUR-USERNAME"/> <!--e.g. scottp@PerfectoMobile.com -->
+		<add key="PerfectoPassword" value="YOUR-PASSWORD"/>		
+</appSettings>
