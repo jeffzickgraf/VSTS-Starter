@@ -156,8 +156,8 @@ namespace VSTSDigitalDemotests
 
 				WebDriver.FindElementByXPath(StarbucksObjects.Elements.AddToBagButton).Click();
 
-				//Give an animation time to run that is for adding item to bag before next click step
-				Thread.Sleep(1000);
+				//Give an add to bag animation time to run before next click step or receive dom exception
+				Thread.Sleep(2000);
 
 				//View bag - if menu is shrunk - click takes to bag. If large menu - then extra step to go to bag
 				WebDriver.FindElementByXPath(StarbucksObjects.Elements.MyBagTriggerButton).Click();
