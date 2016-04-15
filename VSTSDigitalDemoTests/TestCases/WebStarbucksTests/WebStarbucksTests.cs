@@ -100,16 +100,7 @@ namespace VSTSDigitalDemotests
 					//Can't use visual analysis yet - so just verify via title we are on correct page
 					var failMessage = string.Format("Expected: {0} but saw {1}", WebStarbucksObjects.TextCheckPoints.StarbucksStoreTitle, WebDriver.Title);
 					Assert.IsTrue(WebDriver.Title == WebStarbucksObjects.TextCheckPoints.StarbucksStoreTitle, failMessage);
-				}
-
-
-				//Intentionally throwing an error for Galaxy S6
-				if (GetDeviceModel(WebDriver).ToUpperInvariant() == "GALAXY S6")
-				{
-					Thread.Sleep(1500); //sleeping to give some space in WT report
-					Assert.IsTrue(Checkpoint("Intentional Text Does Not Exist", WebDriver, 1),
-					"Intentional Error");
-				}
+				}				
 			}
 			catch (NoSuchElementException nsee)
 			{

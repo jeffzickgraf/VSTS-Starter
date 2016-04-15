@@ -18,8 +18,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		}
 
 		#region -- Initialization and Cleanup
-		[OneTimeSetUp]
-		//Runs at the start of class initialization.
+		[OneTimeSetUp]		
 		public static void PerfectoOpenConnection()
 		{
 			TestRunLocation = TestContext.CurrentContext.TestDirectory;
