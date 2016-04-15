@@ -2,7 +2,7 @@ using System;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using VSTSDigitalDemoTests;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Diagnostics;
 using VSTSDigitalDemoTests.TestResources;
 using System.Threading;
@@ -12,8 +12,8 @@ namespace VSTSDigitalDemotests
 	/// <summary>
 	/// Summary description for MobileRemoteTest
 	/// </summary>	
-	[TestClass]
-	public class StarbucksTests : TestBase
+	[TestFixture]
+	public class StarbucksTests : WebTestBase
 	{
 		public StarbucksTests()
 		{
@@ -23,22 +23,23 @@ namespace VSTSDigitalDemotests
 		protected static RemoteWebDriverExtended WebDriver { get; set; }
 
 		//Might be able to put initialize and cleanup back in testbase
-		[ClassInitialize]
-		public static void PerfectoOpenConnection(TestContext testContext)
+		[OneTimeSetUp]
+		public static void PerfectoOpenConnection()
 		{
+			TestRunLocation = TestContext.CurrentContext.TestDirectory;
 			WebDriver = InitializeDriver();
 		}
 
 		/// <summary>
 		/// Run automatically by framework after all test methods get run for the class.
 		/// </summary>
-		[ClassCleanup]
+		[OneTimeTearDown]
 		public static void Cleanup()
 		{
 			PerfectoCloseConnection(WebDriver);
 		}
 
-		[TestMethod]
+		[Test]
 		public void Case01_OpenStarbucksHomepage()
 		{
 			try
@@ -61,7 +62,7 @@ namespace VSTSDigitalDemotests
 			}
 		}
 				
-		[TestMethod]
+		[Test]
 		public void Case020_NavigateToStarbucksShop()
 		{
 			IWebElement field;
@@ -118,7 +119,7 @@ namespace VSTSDigitalDemotests
 			}
 		}
 
-		[TestMethod]
+		[Test]
 		public void Case030_SearchForCoffeeAddToCart()
 		{			
 			try

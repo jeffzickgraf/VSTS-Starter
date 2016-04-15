@@ -34,8 +34,10 @@ namespace MultiTestExecutor
 				}
 
 				//Get the devices to run for 
+				string currentPath = Directory.GetCurrentDirectory();
+				string baseProjectPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\"));
 				ParameterRetriever retriever = new ParameterRetriever();
-				PerfectoTestParams testParams = retriever.GetVSOExecParam(true);
+				PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
 
 				//Execute in parallel for each device
 				Parallel.ForEach(testParams.Devices, device => {
@@ -54,14 +56,15 @@ namespace MultiTestExecutor
 		private static void StartTestRunner(Device device, string assemblyArgs)
 		{
 			string currentPath = Directory.GetCurrentDirectory();
-			string runnerPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\")) + @"\ParallelTestRunner";
-
+			string baseProjectPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\"));			
+			string runnerPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\")) + @"\NunitConsole";
+			
 			DirectoryInfo testRunDirectory = CopyTestRunner(device, currentPath, runnerPath);
 
 			//Get device group again as a separate instance as we will remove other devices
 			//	and deserialize our JSON Device configuration that will be used by each test run
 			ParameterRetriever retriever = new ParameterRetriever();
-			PerfectoTestParams testParams = retriever.GetVSOExecParam(true);
+			PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
 
 			//drop other devices
 			testParams.Devices.RemoveAll(d => d.DeviceDetails.DeviceID != device.DeviceDetails.DeviceID);
@@ -85,7 +88,7 @@ namespace MultiTestExecutor
 			Process myProcess = new Process();
 			ProcessStartInfo myProcessStartInfo
 				= new ProcessStartInfo(testRunDirectory.FullName 
-				+ @"\ParallelTestRunner.exe", "provider:VSTEST_2015 root:TestResults threadcount:1 out:result.trx plevel:TestCase " + assemblyArgs);
+				+ @"\nunit3-console.exe", assemblyArgs);
 
 			myProcessStartInfo.WindowStyle = ProcessWindowStyle.Normal;
 			//Must set WorkingDirectory to execute from the location of the testrunner or it will pull from this exe's config

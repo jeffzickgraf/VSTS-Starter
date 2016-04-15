@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Configuration;
+using VSTSDigitalDemoTests.Utility;
 
 namespace VSTSDigitalDemoTests
 {
@@ -20,6 +20,7 @@ namespace VSTSDigitalDemoTests
 		protected static string TestCaseName;
 		protected static Device CurrentDevice;
 		protected static AppiumDriver<IWebElement> DriverInstance;
+		protected static string TestRunLocation;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -29,13 +30,12 @@ namespace VSTSDigitalDemoTests
 			string model = "Unknown device model";
 			try
 			{
-				//Pull host and credentials from app.config. See Read-Me-For-Configuration.txt
-				var host = ConfigurationManager.AppSettings.Get("PerfectoCloud");
-				var user = ConfigurationManager.AppSettings.Get("PerfectoUsername");
-				var password = ConfigurationManager.AppSettings.Get("PerfectoPassword");
+				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
+				string host, user, password;
+				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out host, out user, out password);
 
 				ParameterRetriever testParams = new ParameterRetriever();
-				PerfectoTestingParameters = testParams.GetVSOExecParam(false);
+				PerfectoTestingParameters = testParams.GetVSOExecParam(baseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
@@ -139,7 +139,7 @@ namespace VSTSDigitalDemoTests
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
 				driver.ExecuteScript("mobile:execution:close", param);
 
-				string currentPath = Directory.GetCurrentDirectory();
+				string currentPath = TestRunLocation; //Directory.GetCurrentDirectory();
 				string newPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\RunReports\Native\"));
 				driver.DownloadReport(DownloadReportTypes.pdf, newPath + "\\" + model + " " + TestCaseName + " report");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.video, newPath + "\\" + model + " " + TestCaseName + " video", "flv");

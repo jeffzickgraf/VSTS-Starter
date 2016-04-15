@@ -1,4 +1,4 @@
-﻿The app.config contains a section for appSettings that points to an external file.
+﻿The app.config contains a section for appettings that points to an external file.
 
 Copy the following <appSettings> xml to a text file and place into the 
 PerfectoHelloWorld folder (same folder as app.config file) as "appsettings.config" 

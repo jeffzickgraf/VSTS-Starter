@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 using VSTSDigitalDemoTests.TestResources;
 
 namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
-{
-	//commenting out until can resolve ordering of tests.
-	//[TestClass]
+{	
+	[TestFixture]
 	public class NativeStarbucksTests : AppiumTestBase
 	{
 		public NativeStarbucksTests()
@@ -18,24 +17,26 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		}
 
 		#region -- Initialization and Cleanup
-		[ClassInitialize]
+		[OneTimeSetUp]
 		//Runs at the start of class initialization.
-		public static void PerfectoOpenConnection(TestContext testContext)
+		public static void PerfectoOpenConnection()
 		{
+			TestRunLocation = TestContext.CurrentContext.TestDirectory;
 			DriverInstance = InitializeDriver();
 		}
 
 		/// <summary>
 		/// Run automatically by framework after all test methods get run for the class.
 		/// </summary>
-		[ClassCleanup]
+		[OneTimeTearDown]
 		public static void Cleanup()
 		{
+			PerfectoCloseConnection(DriverInstance);
 		}
 		#endregion
 
-		[TestMethod]
-		public void Case01_SignIn()
+		[Test]
+		public void NativeCase01_SignIn()
 		{
 			if (IsAndroid())
 			{

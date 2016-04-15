@@ -67,15 +67,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="TestResources\DevicesGroup\AndroidConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\DevicesGroup\PhoneOnlyConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestResources\DevicesGroup\PerfectoConfigExe.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="TestResources\DevicesGroup\AndroidConfig.json" />
+    <None Include="TestResources\DevicesGroup\PhoneOnlyConfig.json" />
+    <None Include="TestResources\DevicesGroup\PerfectoConfigExe.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -10,7 +10,7 @@ namespace SharedComponents.Parameters
 {
 	public class ParameterRetriever
 	{
-		public PerfectoTestParams GetVSOExecParam(bool UseBuildDropFolder = true)
+		public PerfectoTestParams GetVSOExecParam(string baseProjectPath = "", bool UseBuildDropFolder = true)
 		{
 			List <PerfectoTestParams> parameters = new List<PerfectoTestParams>();
 			List<string> devices = new List<string>();
@@ -27,11 +27,22 @@ namespace SharedComponents.Parameters
 
 				string finalResolutionPath = vSTSConfigJSONPath;
 				if (!UseBuildDropFolder || !File.Exists(vSTSConfigJSONPath))
-				{					
-					// get file from local machine build - use just the filename
-					finalResolutionPath = @"TestResources\DevicesGroup\" + SharedConstants.DeviceConfigFileName;
+				{
+					//Get file from local machine build
 
-					Console.WriteLine("VSTS file not found - pulling from: " + currentPath + "\\" + finalResolutionPath);
+					//When the MultiTestExecutor is used, need to take from test run folder otherwise - need to grab from sharedcomponents
+					if (currentPath.Contains("TestRuns"))
+					{
+						baseProjectPath = currentPath + @"\TestResources\DevicesGroup\";
+					}
+					else
+					{
+						baseProjectPath += @"\SharedComponents\TestResources\DevicesGroup\";
+					}
+
+					finalResolutionPath = baseProjectPath +  SharedConstants.DeviceConfigFileName;
+
+					Console.WriteLine("VSTS file not found - pulling from: " + finalResolutionPath);
 				}			
 				
 				using (StreamReader jsonConfigFile = File.OpenText(finalResolutionPath))
@@ -46,8 +57,6 @@ namespace SharedComponents.Parameters
 
 					testParams = (PerfectoTestParams)serializer.ReadObject(ms);					
 				}
-
-
 			}
 			catch (Exception e)
 			{

@@ -9,30 +9,33 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Xml.Linq;
+using VSTSDigitalDemoTests.Utility;
 
 namespace VSTSDigitalDemoTests
 {
-	public abstract class TestBase
+	public abstract class WebTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
 		protected static string TestCaseName;
 		protected static Device CurrentDevice;
+		protected static string TestRunLocation;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
 		/// </summary>		
 		protected static RemoteWebDriverExtended InitializeDriver()
-		{			
+		{
 			string model = "Unknown device model";
 			try
 			{
-				//Pull host and credentials from app.config. See Read-Me-For-Configuration.txt
-				var host = ConfigurationManager.AppSettings.Get("PerfectoCloud");
-				var user = ConfigurationManager.AppSettings.Get("PerfectoUsername");
-				var password = ConfigurationManager.AppSettings.Get("PerfectoPassword");
-
+				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
+				string host, user, password;
+				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out host, out user, out password);
+								
 				ParameterRetriever testParams = new ParameterRetriever();
-				PerfectoTestingParameters = testParams.GetVSOExecParam(false);
+				PerfectoTestingParameters = testParams.GetVSOExecParam(baseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
@@ -76,7 +79,7 @@ namespace VSTSDigitalDemoTests
 				}
 
 				var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", host));
-				RemoteWebDriverExtended driver = new RemoteWebDriverExtended(url, capabilities, new TimeSpan(0,2,0));
+				RemoteWebDriverExtended driver = new RemoteWebDriverExtended(url, capabilities, new TimeSpan(0, 2, 0));
 				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
 				return driver;
 			}
@@ -112,8 +115,8 @@ namespace VSTSDigitalDemoTests
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
 				driver.ExecuteScript("mobile:execution:close", param);
-
-				string currentPath = Directory.GetCurrentDirectory();
+				
+				string currentPath = TestRunLocation;
 				string newPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\RunReports\"));
 				driver.DownloadReport(DownloadReportTypes.pdf, newPath + "\\" + model + " " + TestCaseName + " report");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.video, newPath + "\\" + model + " " + TestCaseName + " video", "flv");
