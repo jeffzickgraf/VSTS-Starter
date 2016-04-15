@@ -118,6 +118,8 @@ namespace MultiTestExecutor
 			DirectoryCopy(runnerPath, testRunDirectory.FullName, false);
 			//Now need the addins for the nunit2 compatability
 			DirectoryCopy(runnerPath + "\\addins", testRunDirectory.FullName + "\\addins", true);
+			//Now the test cases
+			DirectoryCopy(currentPath, testRunDirectory.FullName, false);
 				
 			return testRunDirectory;
 		}
