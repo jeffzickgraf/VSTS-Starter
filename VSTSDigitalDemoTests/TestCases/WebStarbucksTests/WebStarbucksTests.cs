@@ -64,7 +64,7 @@ namespace VSTSDigitalDemotests
 			}
 		}
 				
-		//[Test]
+		[Test]
 		public void Case020_NavigateToStarbucksShop()
 		{
 			IWebElement field;
@@ -121,7 +121,7 @@ namespace VSTSDigitalDemotests
 			}
 		}
 
-		//[Test]
+		[Test]
 		public void Case030_SearchForCoffeeAddToCart()
 		{			
 			try
