@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -14,6 +14,7 @@ using VSTSDigitalDemoTests.Utility;
 
 namespace VSTSDigitalDemoTests
 {
+	[Category("AppiumTests")]
 	public abstract class AppiumTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
@@ -39,20 +40,13 @@ namespace VSTSDigitalDemoTests
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
-				if (CurrentDevice == null)
-					Assert.Inconclusive("No device found in PerfectoTestingParameters.");
-
-				if (CurrentDevice.DeviceDetails.IsDesktopBrowser)
-					Assert.Inconclusive("Desktop Web Not for Appium. Skipping.");
-
-				if (!CurrentDevice.DeviceDetails.RunNative)
-					Assert.Inconclusive(string.Format("Native turned off for: {0}. Probably no app support.", CurrentDevice.DeviceDetails.Name));
+				CheckForValidDeviceConfiguration();
 
 				model = CurrentDevice.DeviceDetails.Name ?? "Unknown device Model";
 
 				Trace.Listeners.Add(new ConsoleTraceListener());
 				Trace.AutoFlush = true;
-								
+
 				DesiredCapabilities capabilities = new DesiredCapabilities();
 				capabilities.SetCapability("automationName", "Appium");
 				capabilities.SetCapability("user", user);
@@ -61,7 +55,7 @@ namespace VSTSDigitalDemoTests
 				capabilities.SetPerfectoLabExecutionId(host);
 				capabilities.SetCapability("deviceName", CurrentDevice.DeviceDetails.DeviceID);
 				capabilities.SetCapability("scriptName", "Parallel-" + TestCaseName);
-								
+
 				capabilities.SetCapability("windTunnelPersona", "Georgia");
 
 
@@ -91,6 +85,19 @@ namespace VSTSDigitalDemoTests
 				Console.WriteLine(message);
 				throw new Exception(message, ex);
 			}			
+		}
+
+		private static void CheckForValidDeviceConfiguration()
+		{
+			//shouldn't get these next 3 inconclusives - but you never know :-)
+			if (CurrentDevice == null)
+				Assert.Inconclusive("No device found in PerfectoTestingParameters.");
+
+			if (CurrentDevice.DeviceDetails.IsDesktopBrowser)
+				Assert.Inconclusive("Desktop Web Not for Appium. Skipping.");
+
+			if (!CurrentDevice.DeviceDetails.RunNative)
+				Assert.Inconclusive(string.Format("Native turned off for: {0}. Probably no app support.", CurrentDevice.DeviceDetails.Name));
 		}
 
 		protected static void OpenApp()

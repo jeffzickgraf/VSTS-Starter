@@ -1,20 +1,17 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
-using VSTSDigitalDemotests;
 using SharedComponents.Parameters;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Xml.Linq;
 using VSTSDigitalDemoTests.Utility;
+using NUnit.Framework;
 
 namespace VSTSDigitalDemoTests
 {
+	[Category("WebTests")]
 	public abstract class WebTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
@@ -33,17 +30,13 @@ namespace VSTSDigitalDemoTests
 				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
 				string host, user, password;
 				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out host, out user, out password);
-								
+
 				ParameterRetriever testParams = new ParameterRetriever();
 				PerfectoTestingParameters = testParams.GetVSOExecParam(baseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
-				if (CurrentDevice == null)
-					Assert.Inconclusive("No device found in PerfectoTestingParameters.");
-
-				if (!CurrentDevice.DeviceDetails.RunWeb)
-					Assert.Inconclusive(string.Format("Web run turned off for: {0}.", CurrentDevice.DeviceDetails.Name));
+				CheckForValidConfiguration();
 
 				model = CurrentDevice.DeviceDetails.Name ?? "Unknown device Model";
 
@@ -91,6 +84,15 @@ namespace VSTSDigitalDemoTests
 				HandleGeneralException(e, model);
 			}
 			return null;
+		}
+
+		private static void CheckForValidConfiguration()
+		{
+			if (CurrentDevice == null)
+				Assert.Inconclusive("No device found in PerfectoTestingParameters.");
+
+			if (!CurrentDevice.DeviceDetails.RunWeb)
+				Assert.Inconclusive(string.Format("Web run turned off for: {0}.", CurrentDevice.DeviceDetails.Name));
 		}
 
 		/// <summary>

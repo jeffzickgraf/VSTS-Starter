@@ -54,9 +54,9 @@ namespace MultiTestExecutor
 		private static void StartTestRunner(Device device, string assemblyArgs)
 		{
 			string currentPath = Directory.GetCurrentDirectory();
-			string baseProjectPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\"));			
+			string baseProjectPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\"));
 			string runnerPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\")) + @"\NunitConsole";
-			
+
 			DirectoryInfo testRunDirectory = CopyTestRunner(device, currentPath, runnerPath);
 
 			//Get device group again as a separate instance as we will remove other devices
@@ -80,13 +80,24 @@ namespace MultiTestExecutor
 				memoryStream.WriteTo(fileStream);
 			}
 
-			//These are the arguments:
-			//If using VS 2013 - change provider: to VSTEST_2013
-			//provider:VSTEST_2015 root:TestResults threadcount:1 out:result.trx plevel:TestCase YOUR-DLL-WITH-TEST-CASES.dll
+			//Use the nunit3 console to run our tests
+			//arguments for nunit3 look like:
+			//		your-assembly-with-test-cases.dll --result=TestRun.xml;format=nunit2 --where "cat != AppiumTests"
+			//Using format=nunit2 for VSTS compatibility (it can't process nunit3 results)
+			var arguments = assemblyArgs + " --result=TestRun.xml;format=nunit2";
+			
+			string toSkip = GetTestsToSkipForDevice(device);
+
+			//if device config needs to skip -add a where clause to our console argument
+			if (!string.IsNullOrEmpty(toSkip))
+			{
+				arguments += " -- where \"" + toSkip + "\"";
+			}
+			
 			Process myProcess = new Process();
 			ProcessStartInfo myProcessStartInfo
-				= new ProcessStartInfo(testRunDirectory.FullName 
-				+ @"\nunit3-console.exe", assemblyArgs + " --result=TestRun.xml;format=nunit2" );
+				= new ProcessStartInfo(testRunDirectory.FullName
+				+ @"\nunit3-console.exe", arguments);
 
 			myProcessStartInfo.WindowStyle = ProcessWindowStyle.Normal;
 			//Must set WorkingDirectory to execute from the location of the testrunner or it will pull from this exe's config
@@ -95,6 +106,28 @@ namespace MultiTestExecutor
 			myProcess.StartInfo = myProcessStartInfo;
 			myProcess.OutputDataReceived += (sender, args) => OnDataReceived(args.Data);
 			myProcess.Start();
+		}
+
+		private static string GetTestsToSkipForDevice(Device device)
+		{
+			//See if we are supposed to skip Appium or Web tests for this device
+			string toSkip = string.Empty;
+
+			//If both 
+			if (!device.DeviceDetails.RunWeb && !device.DeviceDetails.RunNative)
+			{
+				toSkip = "cat != WebTests and cat != AppiumTests";
+			}
+			else if (!device.DeviceDetails.RunWeb)
+			{
+				toSkip = "cat != WebTests";
+			}
+			else if (!device.DeviceDetails.RunNative || device.DeviceDetails.IsDesktopBrowser)
+			{
+				toSkip = "cat != AppiumTests";
+			}
+
+			return toSkip;
 		}
 
 		//output to the console any output from the runner

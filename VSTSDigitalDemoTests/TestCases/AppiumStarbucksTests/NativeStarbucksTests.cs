@@ -9,7 +9,7 @@ using VSTSDigitalDemoTests.TestResources;
 
 namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 {	
-	[TestFixture]
+	[TestFixture]	
 	public class NativeStarbucksTests : AppiumTestBase
 	{
 		public NativeStarbucksTests()
