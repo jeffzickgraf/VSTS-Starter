@@ -47,6 +47,8 @@ namespace VSTSDigitalDemotests
 				Trace.WriteLine("Open Starbucks Homepage - Starting Test");
 				WebDriver.Navigate().GoToUrl("http://www.starbucks.com");
 
+				//Need just a little time for the driver to be able to pull from new page instead of old one.
+				Thread.Sleep(1500);
 				string pageTitle = WebDriver.Title;
 				Assert.IsTrue(pageTitle.Contains(StarbucksObjects.TextCheckPoints.StarbucksHomeTitle),
 					string.Format("Expected: {0} but title was {1})", StarbucksObjects.TextCheckPoints.StarbucksHomeTitle, pageTitle));
