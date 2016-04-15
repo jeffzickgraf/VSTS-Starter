@@ -49,7 +49,7 @@ namespace VSTSDigitalDemotests
 				WebDriver.Navigate().GoToUrl("http://www.starbucks.com");
 
 				//Need just a little time for the driver to be able to pull from new page instead of old one.
-				Thread.Sleep(1500);
+				Thread.Sleep(2500);
 				string pageTitle = WebDriver.Title;
 				Assert.IsTrue(pageTitle.Contains(WebStarbucksObjects.TextCheckPoints.StarbucksHomeTitle),
 					string.Format("Expected: {0} but title was {1})", WebStarbucksObjects.TextCheckPoints.StarbucksHomeTitle, pageTitle));
@@ -124,7 +124,7 @@ namespace VSTSDigitalDemotests
 				WebDriver.FindElementByXPath(WebStarbucksObjects.Elements.SearchboxLink).Click();
 
 				//select our desired result
-				Thread.Sleep(1000); //need some time for elements to come down before tyring to click
+				Thread.Sleep(2000); //need some time for elements to come down before tyring to click
 				WebDriver.FindElementByXPath(WebStarbucksObjects.Elements.CoffeeSearchResult).Click();
 				
 				if (IsMobileDevice)

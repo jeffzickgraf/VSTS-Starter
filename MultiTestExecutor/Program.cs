@@ -91,9 +91,11 @@ namespace MultiTestExecutor
 			//if device config needs to skip -add a where clause to our console argument
 			if (!string.IsNullOrEmpty(toSkip))
 			{
-				arguments += " -- where \"" + toSkip + "\"";
+				arguments += " --where \"" + toSkip + "\"";
 			}
-			
+
+			Console.WriteLine("About to start nunit3-console.exe with the following arguments: " + arguments);
+
 			Process myProcess = new Process();
 			ProcessStartInfo myProcessStartInfo
 				= new ProcessStartInfo(testRunDirectory.FullName

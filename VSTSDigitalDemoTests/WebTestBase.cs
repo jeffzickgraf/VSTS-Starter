@@ -194,15 +194,10 @@ namespace VSTSDigitalDemoTests
 			try
 			{
 				driver.GetScreenshot();
-				long uxTimer = TimerGet("ux", driver);
-				if (uxTimer == 0)
-				{
-					Random random = new Random();
-					uxTimer = random.Next(1200);
-				}
+				long uxTimer = TimerGet("ux", driver);				
 				Console.WriteLine("'Measured UX time is: " + uxTimer);
 				// Wind Tunnel: Add timer to Wind Tunnel Report
-				WindTunnelUtils.ReportTimer(driver, uxTimer, 2000, message, "uxTimer");
+				WindTunnelUtils.ReportTimer(driver, uxTimer, 8000, message, "uxTimer");
 			}
 			catch (NullReferenceException nex)
 			{
