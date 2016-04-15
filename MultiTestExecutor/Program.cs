@@ -88,7 +88,7 @@ namespace MultiTestExecutor
 			Process myProcess = new Process();
 			ProcessStartInfo myProcessStartInfo
 				= new ProcessStartInfo(testRunDirectory.FullName 
-				+ @"\nunit3-console.exe", assemblyArgs);
+				+ @"\nunit3-console.exe", assemblyArgs + " --result=nunit2" );
 
 			myProcessStartInfo.WindowStyle = ProcessWindowStyle.Normal;
 			//Must set WorkingDirectory to execute from the location of the testrunner or it will pull from this exe's config
