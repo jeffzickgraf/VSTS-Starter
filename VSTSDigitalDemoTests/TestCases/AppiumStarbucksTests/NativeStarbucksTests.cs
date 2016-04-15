@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VSTSDigitalDemoTests.TestResources;
 
 namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
-{	
-	[TestFixture]	
+{
+	/// <summary>
+	/// Tests that exercise the Starbucks native mobile app.
+	/// </summary>
+	[TestFixture]
+	[Category("AppiumTests")]
 	public class NativeStarbucksTests : AppiumTestBase
 	{
 		public NativeStarbucksTests()

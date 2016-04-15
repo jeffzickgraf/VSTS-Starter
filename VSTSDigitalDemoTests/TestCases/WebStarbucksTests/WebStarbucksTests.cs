@@ -10,9 +10,10 @@ using System.Threading;
 namespace VSTSDigitalDemotests
 {
 	/// <summary>
-	/// Summary description for MobileRemoteTest
+	/// Test that exersise the starbucks responsive website.
 	/// </summary>	
 	[TestFixture]
+	[Category("WebTests")]
 	public class WebStarbucksTests : WebTestBase
 	{
 		public WebStarbucksTests()

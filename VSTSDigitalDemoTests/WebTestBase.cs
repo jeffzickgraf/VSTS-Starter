@@ -10,8 +10,7 @@ using VSTSDigitalDemoTests.Utility;
 using NUnit.Framework;
 
 namespace VSTSDigitalDemoTests
-{
-	[Category("WebTests")]
+{	
 	public abstract class WebTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;

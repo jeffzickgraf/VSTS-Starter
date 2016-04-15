@@ -13,8 +13,7 @@ using System.Linq;
 using VSTSDigitalDemoTests.Utility;
 
 namespace VSTSDigitalDemoTests
-{
-	[Category("AppiumTests")]
+{	
 	public abstract class AppiumTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
