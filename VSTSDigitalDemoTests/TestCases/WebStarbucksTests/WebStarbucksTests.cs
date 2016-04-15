@@ -13,11 +13,11 @@ namespace VSTSDigitalDemotests
 	/// Summary description for MobileRemoteTest
 	/// </summary>	
 	[TestFixture]
-	public class StarbucksTests : WebTestBase
+	public class WebStarbucksTests : WebTestBase
 	{
-		public StarbucksTests()
+		public WebStarbucksTests()
 		{
-			TestCaseName = "StarbucksTests-csharp";
+			TestCaseName = "WebStarbucks";
 		}
 
 		protected static RemoteWebDriverExtended WebDriver { get; set; }
