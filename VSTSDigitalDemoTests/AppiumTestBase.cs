@@ -140,7 +140,7 @@ namespace VSTSDigitalDemoTests
 				driver.ExecuteScript("mobile:execution:close", param);
 
 				string currentPath = TestRunLocation; //Directory.GetCurrentDirectory();
-				string newPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\RunReports\Native\"));
+				string newPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\RunReports\"));
 				driver.DownloadReport(DownloadReportTypes.pdf, newPath + "\\" + model + " " + TestCaseName + " report");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.video, newPath + "\\" + model + " " + TestCaseName + " video", "flv");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.image, "C:\\test\\report\\images", "jpg");
