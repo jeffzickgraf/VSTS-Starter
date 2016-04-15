@@ -44,7 +44,10 @@ namespace VSTSDigitalDemoTests
 
 				if (CurrentDevice.DeviceDetails.IsDesktopBrowser)
 					Assert.Inconclusive("Desktop Web Not for Appium. Skipping.");
-				
+
+				if (!CurrentDevice.DeviceDetails.RunNative)
+					Assert.Inconclusive(string.Format("Native turned off for: {0}. Probably no app support.", CurrentDevice.DeviceDetails.Name));
+
 				model = CurrentDevice.DeviceDetails.Name ?? "Unknown device Model";
 
 				Trace.Listeners.Add(new ConsoleTraceListener());
@@ -174,13 +177,14 @@ namespace VSTSDigitalDemoTests
 
 		protected static void HandleNoElementException(NoSuchElementException nsee, AppiumDriver<IWebElement> driver)
 		{
-			HandleNoElementException(nsee, GetDeviceModel(driver));			
+			HandleNoElementException(nsee, GetDeviceModel(driver), true);						
 		}
 
-		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel)
+		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel, bool shouldThrow = true)
 		{
-			Console.WriteLine(deviceModel+ " Element not found: " + nsee.Message);
-			throw new NoSuchElementException(deviceModel + " Element not found" + nsee.Message, nsee);
+			Console.WriteLine(deviceModel + " Element not found: " + nsee.Message);
+			if(shouldThrow)
+				throw new NoSuchElementException(deviceModel + " Element not found" + nsee.Message, nsee);
 		}
 
 		protected static void HandleGeneralException(Exception e, AppiumDriver<IWebElement> driver)

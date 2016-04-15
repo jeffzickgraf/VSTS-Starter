@@ -39,8 +39,14 @@ namespace SharedComponents.Parameters
 		[DataMember(Name="isDesktopBrowser")]
 		public bool IsDesktopBrowser { get; set; }
 
+		[DataMember(Name = "runNative")]
+		public bool RunNative { get; set; }
+
+		[DataMember(Name = "runWeb")]
+		public bool RunWeb { get; set; }
+
 		public DeviceDetails(string deviceID, string os, string osVersion, string name, string browserName, 
-			string browserVersion, bool isDesktopBrowser = false)
+			string browserVersion, bool isDesktopBrowser = false, bool runNative = false, bool runWeb = false)
 		{
 			DeviceID = deviceID;
 			OS = os;
@@ -49,6 +55,8 @@ namespace SharedComponents.Parameters
 			BrowserName = browserName;
 			BrowserVersion = browserVersion;
 			IsDesktopBrowser = isDesktopBrowser;
+			RunNative = runNative;
+			RunWeb = runWeb;
 		}
 	}
 }

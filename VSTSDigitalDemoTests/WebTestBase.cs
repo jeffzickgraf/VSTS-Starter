@@ -42,6 +42,9 @@ namespace VSTSDigitalDemoTests
 				if (CurrentDevice == null)
 					Assert.Inconclusive("No device found in PerfectoTestingParameters.");
 
+				if (!CurrentDevice.DeviceDetails.RunWeb)
+					Assert.Inconclusive(string.Format("Web run turned off for: {0}.", CurrentDevice.DeviceDetails.Name));
+
 				model = CurrentDevice.DeviceDetails.Name ?? "Unknown device Model";
 
 				Trace.Listeners.Add(new ConsoleTraceListener());

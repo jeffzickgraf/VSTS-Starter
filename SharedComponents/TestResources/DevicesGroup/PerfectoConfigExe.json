@@ -5,7 +5,9 @@
         "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
         "os": "iOS",
         "name": "iPhone 6 Plus",
-         "isDesktopBrowser": "false"
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     },
     {
@@ -13,7 +15,9 @@
         "deviceID": "1215FC1949B53804",
         "os": "Android",
         "name": "GalaxyS6",
-        "isDesktopBrowser": "false"
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     },    
     {
@@ -23,23 +27,39 @@
         "browserName": "Chrome",
         "browserVersion": "49",
         "name": "chrome",
-        "isDesktopBrowser": "true"
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
       }
     },   
     {
       "device": {
-        "deviceID": "AA88CEB52C1FFB5C3C112D518746C6C9AB79344E",
+        "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",
         "os": "iOS",
         "name": "iPhone 5",
-         "isDesktopBrowser": "false"
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "067C0546439C8F54",
+        "os": "Android",
+        "name": "Nexus 5",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     },
     {
       "device": {
         "deviceID": "HT58ZJT00147",
         "os": "Android",
-        "name": "AndroidTablet",
-         "isDesktopBrowser": "false"
+        "name": "Nexus 9 Tablet",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     },
     {
@@ -47,7 +67,9 @@
         "deviceID": "95E0EEA907ECC690914C7ABE68786B3EDE4343DF",
         "os": "iOS",
         "name": "iPadAir2",
-         "isDesktopBrowser": "false"
+        "isDesktopBrowser": "false",
+        "runNative": "false",
+        "runWeb": "true"
       }
     }
   ]

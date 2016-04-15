@@ -1,17 +1,23 @@
 {
   "devices": [
-    {
+     {
       "device": {
-        "deviceID": "05157DF53B1BA11F",
-        "os": "Android",
-        "name": "Galaxy6"
+        "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",
+        "os": "iOS",
+        "name": "iPhone 5",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     },
     {
       "device": {
-        "deviceID": "AA7EEEAADD92242C665D2807B538BDACFAA5A0DB",
+        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
         "os": "iOS",
-        "name": "iPhone6s"
+        "name": "iPhone 6 Plus",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
       }
     }
   ]
