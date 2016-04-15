@@ -139,10 +139,9 @@
     <Compile Include="WebTestBase.cs" />
     <Compile Include="TestCases\AppiumStarbucksTests\NativeStarbucksTests.cs" />
     <Compile Include="TestCases\WebStarbucksTests\WebStarbucksTests.cs" />
-    <Compile Include="TestGroupAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestResources\NativeStarbucksObjects.cs" />
-    <Compile Include="TestResources\StarbucksObjects.cs" />
+    <Compile Include="TestResources\WebStarbucksObjects.cs" />
     <Compile Include="TestResources\TestConstants.cs" />
     <Compile Include="WindTunnelUtils.cs" />
   </ItemGroup>

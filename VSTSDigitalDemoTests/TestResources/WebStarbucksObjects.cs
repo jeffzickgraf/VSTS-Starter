@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VSTSDigitalDemoTests.TestResources
 {
-	public static class StarbucksObjects
+	public static class WebStarbucksObjects
 	{	
 		public static class Nav
 		{
