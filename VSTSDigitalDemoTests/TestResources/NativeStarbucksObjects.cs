@@ -11,8 +11,8 @@ namespace VSTSDigitalDemoTests.TestResources
 		public static class Elements
 		{
 			public static string GoToSignIn = "//android.widget.Button[@resource-id='com.starbucks.mobilecard:id/'][1] | //UIAButton[@label='SIGN IN']";
-			public static string Username = "//textfield[@resourceid='username'] | //UIATextField[@path='/0/0/9/0/0']";
-			public static string Password = "//secure[@resourceid='password'] | //UIASecureTextField[@path='/0/0/9/0/1']";
+			public static string Username = "//textfield[@resourceid='username'] | //UIATextField[@value='Username']";
+			public static string Password = "//secure[@resourceid='password'] | //UIASecureTextField";
 			public static string SignInSubmit = "//text[@contentDesc='Submit'] | //UIAButton[@name='SIGN IN']";
 			public static string SignOutButton = "//android.widget.TextView[@text='Sign Out'] | //UIAButton[@label='SIGN OUT']";
 			public static string VerifySignOutButton = "//android.widget.Button[@text='SIGN OUT'] | //UIAButton[@label='Sign Out']";

@@ -10,9 +10,9 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 	/// </summary>
 	[TestFixture]
 	[Category("AppiumTests")]
-	public class NativeStarbucksTests : AppiumTestBase
+	public class AppiumStarbucksTests : AppiumTestBase
 	{
-		public NativeStarbucksTests()
+		public AppiumStarbucksTests()
 		{
 			TestCaseName = "AppiumStarbucks";
 		}
@@ -55,7 +55,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 						PerfectoUtils.OCRTextClick(DriverInstance, "SIGN IN", 0, 15);
 					}
 
-					//Switch to Webview
+					//Switch to Webview for Android
 					DriverInstance.Context = Constants.WEBVIEW;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
@@ -68,11 +68,11 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					}
 
 				}
-				else
+				else    //ios
 				{
 					DriverInstance.Context = Constants.VISUAL;
 					//1st time app usage - may get a prompt
-					if (Checkpoint("Send You Notifications", DriverInstance))
+					if (Checkpoint("Send You Notifications", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
 					}
@@ -84,9 +84,14 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 						CloseApp();
 						OpenApp();
 					}
-				}
 
-				DriverInstance.Context = Constants.NATIVEAPP;
+					DriverInstance.Context = Constants.NATIVEAPP;
+					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.GoToSignIn).Click();
+					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
+					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
+					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInSubmit).Click();
+					Assert.IsTrue(Checkpoint("You're all caught up", DriverInstance), "Expected to see: You're all caught up. Login probably failed.");
+				}
 			}
 			catch (NoSuchElementException nsee)
 			{
