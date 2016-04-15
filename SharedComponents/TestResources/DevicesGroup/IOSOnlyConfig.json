@@ -2,9 +2,9 @@
   "devices": [
     {
       "device": {
-        "deviceID": "1215FC1949B53804",
-        "os": "Android",
-        "name": "GalaxyS6",
+        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
+        "os": "iOS",
+        "name": "iPhone 6 Plus",
         "isDesktopBrowser": "false",
         "runNative": "true",
         "runWeb": "true"
@@ -12,11 +12,21 @@
     },
     {
       "device": {
-        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
+        "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",
         "os": "iOS",
-        "name": "iPhone 6 Plus",
+        "name": "iPhone 5",
         "isDesktopBrowser": "false",
         "runNative": "true",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "95E0EEA907ECC690914C7ABE68786B3EDE4343DF",
+        "os": "iOS",
+        "name": "iPadAir2",
+        "isDesktopBrowser": "false",
+        "runNative": "false",
         "runWeb": "true"
       }
     }

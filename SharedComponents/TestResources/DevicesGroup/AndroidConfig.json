@@ -6,7 +6,7 @@
         "os": "Android",
         "name": "Nexus 9 Tablet",
         "isDesktopBrowser": "false",
-        "runNative": "true",
+        "runNative": "false",
         "runWeb": "true"
       }
     },
