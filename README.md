@@ -39,15 +39,3 @@ Additionally, you will need to provide your device identifiers in the SharedComp
     },
 ```
 
-If you are using Visual Studio 2013, you must change the 'provider' parameter passed into the test runner under MultiTestExecutor/Program.cs to use 2013 instead of 2015
-
-```sh
-	//These are the arguments:
-	//If using VS 2013 - change provider: to VSTEST_2013
-	//provider:VSTEST_2015 root:TestResults threadcount:1 out:result.trx plevel:TestCase YOUR-DLL-WITH-TEST-CASES.dll
-	Process myProcess = new Process();
-	ProcessStartInfo myProcessStartInfo
-		= new ProcessStartInfo(testRunDirectory.FullName 
-		+ @"\ParallelTestRunner.exe", "provider:VSTEST_2015 root:TestResults threadcount:1 out:result.trx plevel:TestCase " + assemblyArgs);
-
-```
