@@ -35,7 +35,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		}
 		#endregion
 
-		[Test]
+		//[Test]
 		public void NativeCase01_SignIn()
 		{
 			if (IsAndroid())

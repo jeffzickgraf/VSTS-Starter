@@ -1,2 +1,4 @@
-cd 'NunitConsole\TestRuns\Galaxy6'
+cd NunitConsole
+cd TestRuns
+cd Galaxy6
 dir
