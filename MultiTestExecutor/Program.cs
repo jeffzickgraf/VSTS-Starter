@@ -6,10 +6,8 @@ using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
-//This code makes use of a test runner to handle launching MSTest
-//https://github.com/sscobici/ParallelTestRunner
-//Probably could just launch MSTest directy but ran out of time to investigate 
-//and the ParallelTestRunner already has code to manage kicking MSTest off and handling errors
+//This code copies files and an nunit console test runner to a folder for each device 
+//that is to be tested and then kicks off the tests
 
 namespace MultiTestExecutor
 {
@@ -116,25 +114,50 @@ namespace MultiTestExecutor
 			//Make folder
 			DirectoryInfo testRunDirectory = Directory.CreateDirectory(runnerPath + @"\TestRuns\" + device.DeviceDetails.Name);
 
-			//copy runner into folder
-			DirectoryInfo runnerDirectory = new DirectoryInfo(runnerPath);
-
-			// Copy the testrunner files to the run directory
-			FileInfo[] files = runnerDirectory.GetFiles("*", SearchOption.TopDirectoryOnly);
-			foreach (FileInfo fi in files)
-			{
-				File.Copy(fi.FullName, testRunDirectory.FullName + "\\" + fi.Name, true);
-			}
-
-			//Copy the test files
-			files = new DirectoryInfo(currentPath).GetFiles("*", SearchOption.TopDirectoryOnly);
-			foreach (FileInfo fi in files)
-			{
-				// Use static Path methods to extract only the file name from the path.
-				File.Copy(fi.FullName, testRunDirectory.FullName + "\\" + fi.Name, true);
-			}
-
+			//Copy only the test runner first - there are possibly previous run directories so don't copy that folder
+			DirectoryCopy(runnerPath, testRunDirectory.FullName, false);
+			//Now need the addins for the nunit2 compatability
+			DirectoryCopy(runnerPath + "\\addins", testRunDirectory.FullName + "\\addins", true);
+				
 			return testRunDirectory;
+		}
+
+		private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+		{
+			// Get the subdirectories for the specified directory.
+			DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+			if (!dir.Exists)
+			{
+				throw new DirectoryNotFoundException(
+					"Source directory does not exist or could not be found: "
+					+ sourceDirName);
+			}
+
+			DirectoryInfo[] dirs = dir.GetDirectories();
+			// If the destination directory doesn't exist, create it.
+			if (!Directory.Exists(destDirName))
+			{
+				Directory.CreateDirectory(destDirName);
+			}
+
+			// Get the files in the directory and copy them to the new location.
+			FileInfo[] files = dir.GetFiles();
+			foreach (FileInfo file in files)
+			{
+				string temppath = Path.Combine(destDirName, file.Name);
+				file.CopyTo(temppath, true);
+			}
+
+			// If copying subdirectories, copy them and their contents to new location.
+			if (copySubDirs)
+			{
+				foreach (DirectoryInfo subdir in dirs)
+				{
+					string temppath = Path.Combine(destDirName, subdir.Name);
+					DirectoryCopy(subdir.FullName, temppath, copySubDirs);
+				}
+			}
 		}
 	}
 }
