@@ -42,7 +42,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 			{
 				DriverInstance.Context = Constants.VISUAL;
 				//Check for initial welcome screen and move through
-				if (Checkpoint("Welcome", DriverInstance))
+				if (Checkpoint("Get Started", DriverInstance))
 				{
 					PerfectoUtils.OCRTextClick(DriverInstance, "Get Started", 0, 15);
 				}
@@ -74,11 +74,27 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				{
 					PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
 				}
+
+				//Possible, we didn't get signed out last run so check for it and signout if needed
+				if (Checkpoint("You're all caught up", DriverInstance))
+				{
+					Logout();
+					CloseApp();
+					OpenApp();
+				}
 			}
+			
+			DriverInstance.Context = Constants.NATIVEAPP;												
+		}
 
-
-			DriverInstance.Context = Constants.NATIVEAPP;
-
+		[Test]
+		public void ativeCase20_Logout()
+		{
+			Logout();
+		}
+		
+		private void Logout()
+		{
 			if (IsAndroid())
 			{
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.AndroidOnlyMenuButton).Click();
@@ -96,7 +112,5 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 			DriverInstance.Context = Constants.VISUAL;
 			Assert.IsTrue(Checkpoint("SIGN IN", DriverInstance, 25), "Expected to find a sign in button but didn't find");
 		}
-
-
 	}
 }
