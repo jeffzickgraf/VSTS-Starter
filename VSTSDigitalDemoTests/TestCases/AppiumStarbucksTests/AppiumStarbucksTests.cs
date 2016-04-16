@@ -41,6 +41,15 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		{
 			try
 			{
+				DriverInstance.Context = Constants.VISUAL;
+				//Possible, we didn't get signed out last run so check for it and signout if needed
+				if (Checkpoint("You're all caught up", DriverInstance))
+				{
+					Logout();
+					CloseApp();
+					OpenApp();
+				}
+
 				if (IsAndroid())
 				{
 					DriverInstance.Context = Constants.VISUAL;
@@ -77,15 +86,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					if (Checkpoint("Send You Notifications", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
-					}
-
-					//Possible, we didn't get signed out last run so check for it and signout if needed
-					if (Checkpoint("You're all caught up", DriverInstance))
-					{
-						Logout();
-						CloseApp();
-						OpenApp();
-					}
+					}					
 
 					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.GoToSignIn).Click();
