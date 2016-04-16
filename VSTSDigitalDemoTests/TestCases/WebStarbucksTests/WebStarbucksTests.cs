@@ -130,8 +130,8 @@ namespace VSTSDigitalDemotests
 				if (IsMobileDevice)
 				{
 					//verify
-					Assert.IsTrue(Checkpoint(WebStarbucksObjects.TextCheckPoints.PikePlaceRoastText, WebDriver),
-						"Expected to see " + WebStarbucksObjects.TextCheckPoints.PikePlaceRoastText);
+					Assert.IsTrue(Checkpoint(WebStarbucksObjects.TextCheckPoints.PikePlaceText, WebDriver),
+						"Expected to see " + WebStarbucksObjects.TextCheckPoints.PikePlaceText);
 
 					TakeTimerIfPossible("Starbucks Store loaded", WebDriver);
 				}

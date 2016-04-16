@@ -14,7 +14,7 @@ namespace VSTSDigitalDemoTests.TestResources
 			public static string Username = "//view[@resourceid='username_label'] | //UIATextField[@value='Username']";
 			public static string Password = "//secure[@resourceid='password'] | //UIASecureTextField";
 			public static string SignInSubmit = "//text[@contentDesc='Submit'] | //UIAButton[@name='SIGN IN']";
-			public static string SignOutButton = "//android.widget.TextView[@text='Sign Out'] | //UIAButton[@label='SIGN OUT']";
+			public static string SignOutButton = "//UIAButton[@label='SIGN OUT'] | //android.widget.TextView[@text='Sign Out'] ";
 			public static string VerifySignOutButton = "//android.widget.Button[@text='SIGN OUT'] | //UIAButton[@label='Sign Out']";
 		}
 
