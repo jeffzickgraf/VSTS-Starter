@@ -57,8 +57,8 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					}
 
 					//Taking some time for login page to load completely - spinner overtop but still shows username
-					//so need to wait until spinner is gone.
-					Thread.Sleep(12500);
+					//so need to wait until spinner is gone or else it eats the click.
+					Thread.Sleep(15000);
 
 					PerfectoUtils.PutText(DriverInstance, "Username", Constants.STARBUCKSUSER,"","");
 					PerfectoUtils.PutText(DriverInstance, "Password", Constants.STARBUCKSPWD, "", "");

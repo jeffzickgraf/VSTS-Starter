@@ -40,8 +40,8 @@ namespace VSTSDigitalDemoTests.TestResources
 			public const string StarbucksHomeTitle = "Starbucks";
 			public const string StarbucksStore = "Starbucks Store";
 			public const string StarbucksStoreTitle = "Starbucks® Store Coffee, Tea, Products and Gifts";
-			public const string PikesPlaceTitle = "Starbucks Pike Place Roast Whole Bean Coffee | Starbucks Store";
-			public const string PikesPlaceRoastText = "Pikes Place Roast";
+			public const string PikePlaceTitle = "Starbucks Pike Place Roast Whole Bean Coffee | Starbucks Store";
+			public const string PikePlaceRoastText = "Pike Place Roast";
 		}
 	}
 }

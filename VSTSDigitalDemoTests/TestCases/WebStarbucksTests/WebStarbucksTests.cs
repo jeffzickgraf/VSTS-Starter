@@ -130,8 +130,8 @@ namespace VSTSDigitalDemotests
 				if (IsMobileDevice)
 				{
 					//verify
-					Assert.IsTrue(Checkpoint(WebStarbucksObjects.TextCheckPoints.PikesPlaceRoastText, WebDriver),
-						"Expected to see " + WebStarbucksObjects.TextCheckPoints.PikesPlaceRoastText);
+					Assert.IsTrue(Checkpoint(WebStarbucksObjects.TextCheckPoints.PikePlaceRoastText, WebDriver),
+						"Expected to see " + WebStarbucksObjects.TextCheckPoints.PikePlaceRoastText);
 
 					TakeTimerIfPossible("Starbucks Store loaded", WebDriver);
 				}
@@ -139,8 +139,8 @@ namespace VSTSDigitalDemotests
 				{
 					var title = WebDriver.Title;
 					//Can't use visual analysis yet - so just verify via title we are on correct page
-					var failMessage = string.Format("Expected: {0} but saw {1}", WebStarbucksObjects.TextCheckPoints.PikesPlaceTitle, title);
-					Assert.IsTrue(title == WebStarbucksObjects.TextCheckPoints.PikesPlaceTitle, failMessage);
+					var failMessage = string.Format("Expected: {0} but saw {1}", WebStarbucksObjects.TextCheckPoints.PikePlaceTitle, title);
+					Assert.IsTrue(title == WebStarbucksObjects.TextCheckPoints.PikePlaceTitle, failMessage);
 				}
 
 				//Check if the newsletter div popup is open and close it
