@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
+using System.Threading;
 using VSTSDigitalDemoTests.TestResources;
 
 namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
@@ -36,7 +37,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		#endregion
 
 		[Test]
-		public void NativeCase01_SignIn()
+		public void Native010_SignIn()
 		{
 			try
 			{
@@ -44,25 +45,26 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				{
 					DriverInstance.Context = Constants.VISUAL;
 					//Check for initial welcome screen and move through
-					if (Checkpoint("Get Started", DriverInstance))
+					if (Checkpoint("Get Started", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Get Started", 0, 15);
 					}
 
 					//Check for another welcome
-					if (Checkpoint("Welcome to Starbucks", DriverInstance))
+					if (Checkpoint("Welcome to Starbucks", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "SIGN IN", 0, 15);
 					}
 
-					//Switch to Webview for Android
-					DriverInstance.Context = Constants.WEBVIEW;
-					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
-					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
-					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInSubmit).Click();
+					//Taking some time for login page to load completely - spinner overtop but still shows username
+					//so need to wait until spinner is gone.
+					Thread.Sleep(12500);
 
-					DriverInstance.Context = Constants.VISUAL;
-					if (Checkpoint(NativeStarbucksObjects.Text.MakeEverySip, DriverInstance))
+					PerfectoUtils.PutText(DriverInstance, "Username", Constants.STARBUCKSUSER,"","");
+					PerfectoUtils.PutText(DriverInstance, "Password", Constants.STARBUCKSPWD, "", "");
+					PerfectoUtils.OCRImageClick(DriverInstance, @"PUBLIC:Jeff/Images/StarbucksSubmit.png");
+					
+					if (Checkpoint(NativeStarbucksObjects.Text.MakeEverySip, DriverInstance, 15))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, NativeStarbucksObjects.Text.NotRightNow, 0, 15);
 					}
@@ -105,7 +107,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		}
 
 		[Test]
-		public void ativeCase20_Logout()
+		public void Native20_Logout()
 		{
 			Logout();
 		}
@@ -114,7 +116,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		{
 			try
 			{
-
+				DriverInstance.Context = Constants.NATIVEAPP;
 				if (IsAndroid())
 				{
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.AndroidOnlyMenuButton).Click();
@@ -123,14 +125,14 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.Settings).Click();
 
 				DriverInstance.Context = Constants.VISUAL;
-				Assert.IsTrue(Checkpoint("Settings", DriverInstance, 25), "Expected the Settings screen but didn't find");
+				Assert.IsTrue(Checkpoint("Settings", DriverInstance, 15), "Expected the Settings screen but didn't find");
 
 				DriverInstance.Context = Constants.NATIVEAPP;
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignOutButton).Click();
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.VerifySignOutButton).Click();
 
 				DriverInstance.Context = Constants.VISUAL;
-				Assert.IsTrue(Checkpoint("SIGN IN", DriverInstance, 25), "Expected to find a sign in button but didn't find");
+				Assert.IsTrue(Checkpoint("SIGN IN", DriverInstance, 15), "Expected to find a sign in button but didn't find");
 			}			
 			catch (NoSuchElementException nsee)
 			{

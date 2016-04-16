@@ -115,8 +115,15 @@ namespace VSTSDigitalDemoTests
             driver.ExecuteScript(command, Parameters);
         }
 
-        //Launches application
-        public static void LaunchApp(RemoteWebDriver driver, String app)
+		public static void OCRImageClick(RemoteWebDriver driver, String image)
+		{
+			Dictionary<String, Object> pars = new Dictionary<String, Object>();
+			pars.Add("label", image);
+			driver.ExecuteScript("mobile:button-image:click", pars);
+		}
+
+		//Launches application
+		public static void LaunchApp(RemoteWebDriver driver, String app)
         {
             Console.WriteLine("Launch App: " + app);
             string command = "mobile:application:open";
@@ -155,8 +162,10 @@ namespace VSTSDigitalDemoTests
             Dictionary<string, Object> Parameters = new Dictionary<string, Object>();
             Parameters.Add("label", label);
             Parameters.Add("text", text);
-            Parameters.Add("label.direction", labelDirection);
-            Parameters.Add("label.offset", labelOffset);
+			if(!string.IsNullOrEmpty(labelDirection))
+				Parameters.Add("label.direction", labelDirection);
+			if (!string.IsNullOrEmpty(labelOffset))
+				Parameters.Add("label.offset", labelOffset);
             driver.ExecuteScript(command, Parameters);
         }
         

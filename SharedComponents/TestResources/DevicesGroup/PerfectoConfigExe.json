@@ -2,16 +2,6 @@
   "devices": [
     {
       "device": {
-        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
-        "os": "iOS",
-        "name": "iPhone 6 Plus",
-        "isDesktopBrowser": "false",
-        "runNative": "true",
-        "runWeb": "true"
-      }
-    },
-    {
-      "device": {
         "deviceID": "1215FC1949B53804",
         "os": "Android",
         "name": "GalaxyS6",
@@ -19,7 +9,17 @@
         "runNative": "true",
         "runWeb": "true"
       }
-    },    
+    },
+    {
+      "device": {
+        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
+        "os": "iOS",
+        "name": "iPhone 6 Plus",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    },        
     {
       "device": {
         "os": "windows",
