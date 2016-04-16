@@ -86,12 +86,20 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					if (Checkpoint("Send You Notifications", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
-					}					
+					}
 
 					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.GoToSignIn).Click();
-					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
-					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
+
+					//having issues laying down username with selenium sendkeys - try visual
+					//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
+					//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
+
+					DriverInstance.Context = Constants.VISUAL;
+					PerfectoUtils.PutText(DriverInstance, "Username", Constants.STARBUCKSUSER, "", "");
+					PerfectoUtils.PutText(DriverInstance, "Password", Constants.STARBUCKSPWD, "", "");
+					
+					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInSubmit).Click();
 					Assert.IsTrue(Checkpoint("You're all caught up", DriverInstance), "Expected to see: You're all caught up. Login probably failed.");
 				}
