@@ -48,7 +48,7 @@
         "os": "Android",
         "name": "Nexus 5",
         "isDesktopBrowser": "false",
-        "runNative": "true",
+        "runNative": "false",
         "runWeb": "true"
       }
     },
