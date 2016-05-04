@@ -227,6 +227,10 @@ namespace VSTSDigitalDemoTests
 			{
 				return false;
 			}
+			catch (Exception)
+			{
+				return false;
+			}
 
 			return true;
 		}
