@@ -129,6 +129,8 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				if (IsAndroid())
 				{
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.AndroidOnlyMenuButton).Click();
+					//Sleep to allow time for menu to fly out - getting a missed click on settings otherwise.
+					Thread.Sleep(1000);
 				}
 
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.Settings).Click();
