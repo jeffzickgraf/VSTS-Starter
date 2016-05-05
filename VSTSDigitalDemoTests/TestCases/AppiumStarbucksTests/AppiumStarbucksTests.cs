@@ -43,7 +43,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 			{
 				DriverInstance.Context = Constants.VISUAL;
 				//Possible, we didn't get signed out last run so check for it and signout if needed
-				if (Checkpoint("You're all caught up", DriverInstance))
+				if (Checkpoint("Add a Starbucks Card to start", DriverInstance, 10))
 				{
 					Logout();
 					CloseApp();
@@ -101,7 +101,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					
 					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInSubmit).Click();
-					Assert.IsTrue(Checkpoint("You're all caught up", DriverInstance), "Expected to see: You're all caught up. Login probably failed.");
+					Assert.IsTrue(Checkpoint("Add a Starbucks Card to start", DriverInstance), "Expected to see: Add a Starbucks Card to start. Login probably failed.");
 				}
 			}
 			catch (NoSuchElementException nsee)
@@ -129,17 +129,25 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				if (IsAndroid())
 				{
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.AndroidOnlyMenuButton).Click();
-					//Sleep to allow time for menu to fly out - getting a missed click on settings otherwise.
+					//Sleep to allow time for menu to fly out - getting a missed click on otherwise.
 					Thread.Sleep(1000);
 				}
 
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Nav.Settings).Click();
 
 				DriverInstance.Context = Constants.VISUAL;
+				if (Checkpoint("Want to receive", DriverInstance, 10))
+				{
+					PerfectoUtils.OCRTextClick(DriverInstance, "NO", 0, 15);
+					Thread.Sleep(1000);
+				}
+
 				Assert.IsTrue(Checkpoint("Settings", DriverInstance, 15), "Expected the Settings screen but didn't find");
 
+				PerfectoUtils.OCRTextClick(DriverInstance, "Sign Out", 0, 25, true);
+
 				DriverInstance.Context = Constants.NATIVEAPP;
-				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignOutButton).Click();
+				//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignOutButton).Click();
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.VerifySignOutButton).Click();
 
 				DriverInstance.Context = Constants.VISUAL;

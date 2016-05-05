@@ -103,7 +103,7 @@ namespace VSTSDigitalDemoTests
         }
 
         //Performs text click ocr function
-        public static void OCRTextClick(RemoteWebDriver driver, String text, int threshold, int timeout)
+        public static void OCRTextClick(RemoteWebDriver driver, String text, int threshold, int timeout, bool shouldScroll=false)
         {
             Console.WriteLine("Find: " + text);
             string command = "mobile:text:select";
@@ -112,6 +112,12 @@ namespace VSTSDigitalDemoTests
             Parameters.Add("timeout", timeout.ToString());
             if (threshold > 0)
                 Parameters.Add("threshold", threshold.ToString());
+			if (shouldScroll)
+			{
+				Parameters.Add("scrolling", "scroll");
+				Parameters.Add("next", "SWIPE_UP");
+			}
+
             driver.ExecuteScript(command, Parameters);
         }
 

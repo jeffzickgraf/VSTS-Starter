@@ -92,12 +92,12 @@
       <HintPath>..\packages\NUnit3TestAdapter.3.0.9-ctp-9\lib\NUnit3.TestAdapter.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PerfectoLab, Version=5.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.5.4.0.0\lib\PerfectoLab.dll</HintPath>
+    <Reference Include="PerfectoLab, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.6.0.0.0\lib\PerfectoLab.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PerfectoLab.Extended, Version=5.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PerfectoLab.Extended.5.4.0.0\lib\PerfectoLab.Extended.dll</HintPath>
+    <Reference Include="PerfectoLab.Extended, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PerfectoLab.Extended.6.0.0.0\lib\PerfectoLab.Extended.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

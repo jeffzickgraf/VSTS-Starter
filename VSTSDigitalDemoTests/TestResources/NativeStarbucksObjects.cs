@@ -14,14 +14,14 @@ namespace VSTSDigitalDemoTests.TestResources
 			public static string Username = "//view[@resourceid='username_label'] | //UIATextField[@value='Username']";
 			public static string Password = "//secure[@resourceid='password'] | //UIASecureTextField";
 			public static string SignInSubmit = "//text[@contentDesc='Submit'] | //UIAButton[@name='SIGN IN']";
-			public static string SignOutButton = "//UIAButton[@label='SIGN OUT'] | //android.widget.TextView[@text='Sign Out'] ";
+			public static string SignOutButton = "//android.widget.TextView[@text='Sign Out'] | //UIAButton[@label='SIGN OUT']";
 			public static string VerifySignOutButton = "//android.widget.Button[@text='SIGN OUT'] | //UIAButton[@label='Sign Out']";
 		}
 
 		public static class Nav
 		{
 			public static string AndroidOnlyMenuButton = "//android.widget.ImageButton[@content-desc='Starbucks, main navigation menu']";
-			public static string Settings = "//android.support.v7.widget.RecyclerView | //UIAButton[@label='SETTINGS']";			
+			public static string Settings = "//android.widget.ImageView[@resource-id='com.starbucks.mobilecard:id/'] | //UIAButton[@label='SETTINGS']";			
 			public static string Stores = "//android.widget.TextView[@text='Stores'] | //UIAButton[@label='STORES']";
 		}
 
