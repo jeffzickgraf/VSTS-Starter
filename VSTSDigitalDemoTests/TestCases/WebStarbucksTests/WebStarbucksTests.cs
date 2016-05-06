@@ -86,21 +86,15 @@ namespace VSTSDigitalDemotests
 				}
 				else
 				{
-					//Sometimes the shop click only opens another menu so lets make sure to go to the shop if that happens
-					try
+					//Sometimes the shop click is eaten and opens another menu so lets make sure to go to the shop if that happens										
+					if (WebDriver.Url == "http://www.starbucks.com/")
 					{
-						field = WebDriver.FindElementByXPath(WebStarbucksObjects.Nav.ShopMegaMenu);
-						//found it open so try to click the shop menu again
-						WebDriver.FindElementByXPath(WebStarbucksObjects.Nav.Shop).Click();
+						WebDriver.Navigate().GoToUrl("http://store.starbucks.com/");
 					}
-					catch (NoSuchElementException)
-					{
-						//expected - do nothing - menu wasn't opened so must have navigated to shop.						
-					}	
-
+										
 					//Can't use visual analysis yet - so just verify via title we are on correct page
 					var failMessage = string.Format("Expected: {0} but saw {1}", WebStarbucksObjects.TextCheckPoints.StarbucksStoreTitle, WebDriver.Title);
-					Assert.IsTrue(WebDriver.Title == WebStarbucksObjects.TextCheckPoints.StarbucksStoreTitle, failMessage);
+					Assert.IsTrue(WebDriver.Url.Contains("store.starbucks.com"), "Unexpected page.");
 				}				
 			}
 			catch (NoSuchElementException nsee)

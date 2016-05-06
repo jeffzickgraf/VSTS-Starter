@@ -2,6 +2,19 @@
   "devices": [
     {
       "device": {
+        "deviceID": "Win7Chrome50",
+        "os": "windows",
+        "osVersion": "7",
+        "browserName": "Chrome",
+        "browserVersion": "50",
+        "name": "chrome50",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
         "deviceID": "0615F6F16FB13932",
         "os": "Android",
         "name": "GalaxyS6",
@@ -17,19 +30,6 @@
         "name": "iPhone 6 Plus",
         "isDesktopBrowser": "false",
         "runNative": "true",
-        "runWeb": "true"
-      }
-    },    
-    {
-      "device": {
-        "deviceID": "Win7Chrome49",
-        "os": "windows",
-        "osVersion": "7",
-        "browserName": "Chrome",
-        "browserVersion": "49",
-        "name": "chrome49",
-        "isDesktopBrowser": "true",
-        "runNative": "false",
         "runWeb": "true"
       }
     },
