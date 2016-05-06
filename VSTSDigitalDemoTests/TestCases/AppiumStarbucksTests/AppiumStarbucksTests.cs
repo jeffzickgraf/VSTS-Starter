@@ -35,15 +35,14 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 			PerfectoCloseConnection(DriverInstance);
 		}
 		#endregion
-
+				
 		[Test]
 		public void Native010_SignIn()
 		{
+			DriverInstance.Context = Constants.VISUAL;
 			try
-			{
-				DriverInstance.Context = Constants.VISUAL;
-				//Possible, we didn't get signed out last run so check for it and signout if needed
-				if (Checkpoint("Add a Starbucks Card to start", DriverInstance, 10))
+			{	
+				if (IsLoggedIn())
 				{
 					Logout();
 					CloseApp();
@@ -82,8 +81,8 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				else    //ios
 				{
 					DriverInstance.Context = Constants.VISUAL;
-					//1st time app usage - may get a prompt
-					if (Checkpoint("Send You Notifications", DriverInstance, 8))
+					//1st time app usage - may get a prompt	
+					if (Checkpoint("Send You Notifications", DriverInstance, 15))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
 					}
@@ -91,17 +90,16 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.GoToSignIn).Click();
 
-					//having issues laying down username with selenium sendkeys - try visual
-					//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Username).SendKeys(Constants.STARBUCKSUSER);
-					//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.Password).SendKeys(Constants.STARBUCKSPWD);
-
 					DriverInstance.Context = Constants.VISUAL;
 					PerfectoUtils.PutText(DriverInstance, "Username", Constants.STARBUCKSUSER, "", "");
 					PerfectoUtils.PutText(DriverInstance, "Password", Constants.STARBUCKSPWD, "", "");
 					
 					DriverInstance.Context = Constants.NATIVEAPP;
 					DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInSubmit).Click();
-					Assert.IsTrue(Checkpoint("Add a Starbucks Card to start", DriverInstance), "Expected to see: Add a Starbucks Card to start. Login probably failed.");
+					//Need some time for elements to render after login
+					Thread.Sleep(3000);
+
+					Assert.IsTrue(IsLoggedIn(), "Expected to see: Add a Starbucks Card to start. Login probably failed.");
 				}
 			}
 			catch (NoSuchElementException nsee)
@@ -142,16 +140,25 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					Thread.Sleep(1000);
 				}
 
-				Assert.IsTrue(Checkpoint("Settings", DriverInstance, 15), "Expected the Settings screen but didn't find");
+				var settingsText = "SETTINGS";
+				var signOutText = "SIGN OUT";
 
-				PerfectoUtils.OCRTextClick(DriverInstance, "Sign Out", 0, 25, true);
+				if (IsAndroid())
+				{
+					settingsText = "Settings";
+					signOutText = "Sign Out";
+				}
+					
+
+				Assert.IsTrue(Checkpoint(settingsText, DriverInstance, 25), "Expected the Settings screen but didn't find");
+
+				PerfectoUtils.OCRTextClick(DriverInstance, signOutText, 0, 25, true);
 
 				DriverInstance.Context = Constants.NATIVEAPP;
-				//DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignOutButton).Click();
 				DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.VerifySignOutButton).Click();
 
-				DriverInstance.Context = Constants.VISUAL;
-				Assert.IsTrue(Checkpoint("SIGN IN", DriverInstance, 15), "Expected to find a sign in button but didn't find");
+				Assert.IsTrue(DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.SignInButton) != null);
+				
 			}			
 			catch (NoSuchElementException nsee)
 			{
@@ -161,6 +168,26 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 			{
                 HandleGeneralException(ex, GetDeviceModel(DriverInstance), true);
 			}
+		}
+
+		private bool IsLoggedIn()
+		{
+			try
+			{
+				DriverInstance.Context = Constants.NATIVEAPP;
+				if (DriverInstance.FindElementByXPath(NativeStarbucksObjects.Elements.LoggedInStaticText) != null)
+					return true;
+
+			}
+			catch (NoSuchElementException nsee)
+			{
+				HandleNoElementException(nsee, GetDeviceModel(DriverInstance), false);
+			}
+			catch (Exception ex)
+			{
+				HandleGeneralException(ex, GetDeviceModel(DriverInstance), false);
+			}
+			return false;
 		}
 	}
 }

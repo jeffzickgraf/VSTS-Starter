@@ -131,9 +131,7 @@ namespace VSTSDigitalDemoTests
 		protected static bool Checkpoint(string textToFind, AppiumDriver<IWebElement> driver, int? timeoutInSeconds = 25)
 		{
 			Console.WriteLine(string.Format("Checking text {0} on {1}", textToFind, GetDeviceModel(driver)));
-
-			long uxTimer;
-			return PerfectoUtils.OCRTextCheckPoint(out uxTimer, driver, textToFind, 0, timeoutInSeconds ?? 25, true, "Checkpoint timer", "Checkpoint timer");
+			return PerfectoUtils.OCRTextCheckPoint(driver, textToFind, timeoutInSeconds ?? 25);
 		}
 				
 		public static void PerfectoCloseConnection(AppiumDriver<IWebElement> driver)

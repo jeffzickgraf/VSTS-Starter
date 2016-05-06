@@ -16,6 +16,8 @@ namespace VSTSDigitalDemoTests.TestResources
 			public static string SignInSubmit = "//text[@contentDesc='Submit'] | //UIAButton[@name='SIGN IN']";
 			public static string SignOutButton = "//android.widget.TextView[@text='Sign Out'] | //UIAButton[@label='SIGN OUT']";
 			public static string VerifySignOutButton = "//android.widget.Button[@text='SIGN OUT'] | //UIAButton[@label='Sign Out']";
+			public static string LoggedInStaticText = "//UIAStaticText[contains(@label, 'Add a Starbucks Card')] | //android.widget.TextView[contains(@text, 'Add a Starbucks Card')]";
+			public static string SignInButton = "//UIAButton[@label='SIGN IN'] | //android.widget.Button[@text='SIGN IN']";
 		}
 
 		public static class Nav
@@ -23,6 +25,7 @@ namespace VSTSDigitalDemoTests.TestResources
 			public static string AndroidOnlyMenuButton = "//android.widget.ImageButton[@content-desc='Starbucks, main navigation menu']";
 			public static string Settings = "//android.widget.ImageView[@resource-id='com.starbucks.mobilecard:id/'] | //UIAButton[@label='SETTINGS']";			
 			public static string Stores = "//android.widget.TextView[@text='Stores'] | //UIAButton[@label='STORES']";
+			public static string PayButtoniOS = "//UIAButton[@label='PAY']";
 		}
 
 		public static class Text

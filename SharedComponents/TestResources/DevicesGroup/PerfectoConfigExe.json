@@ -9,7 +9,7 @@
         "runNative": "true",
         "runWeb": "true"
       }
-    },
+    }, 
     {
       "device": {
         "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
@@ -19,7 +19,7 @@
         "runNative": "true",
         "runWeb": "true"
       }
-    },
+    },    
     {
       "device": {
         "deviceID": "Win7Chrome49",

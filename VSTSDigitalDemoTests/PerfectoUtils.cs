@@ -35,8 +35,24 @@ namespace VSTSDigitalDemoTests
             return result;
         }
 
-        //Perform text check ocr function
-        public static long OCRTextCheck(RemoteWebDriver driver, String text, int threshold, int timeout, bool reportTimer = false, String timerDescription = "timer description", string timerName = "timer name")
+		//Perform text check ocr function with boolean return
+		public static bool OCRTextCheckPoint(RemoteWebDriver driver, String text, int timeout)
+		{
+			bool checkpointPassed;
+
+			Console.WriteLine("Find: " + text);
+			string command = "mobile:checkpoint:text";
+			Dictionary<string, object> Parameters = new Dictionary<string, object>();
+			Parameters.Add("content", text);
+			Parameters.Add("timeout", timeout.ToString());
+			string findstring = (string)driver.ExecuteScript(command, Parameters);
+			bool.TryParse(findstring, out checkpointPassed);
+
+			return checkpointPassed;
+		}
+
+		//Perform text check ocr function
+		public static long OCRTextCheck(RemoteWebDriver driver, String text, int threshold, int timeout, bool reportTimer = false, String timerDescription = "timer description", string timerName = "timer name")
         {
             Console.WriteLine("Find: " + text);
             string command = "mobile:checkpoint:text";
@@ -68,7 +84,7 @@ namespace VSTSDigitalDemoTests
 			Parameters.Add("timeout", timeout.ToString());
 			Parameters.Add("measurement", "accurate");
 			Parameters.Add("source", "camera");
-			Parameters.Add("analysis", "automatic");
+			Parameters.Add("analysis", "full");
 			if (threshold > 0)
 				Parameters.Add("threshold", threshold.ToString());
 			string findstring = (string)driver.ExecuteScript(command, Parameters);
@@ -103,18 +119,25 @@ namespace VSTSDigitalDemoTests
         }
 
         //Performs text click ocr function
-        public static void OCRTextClick(RemoteWebDriver driver, String text, int threshold, int timeout, bool shouldScroll=false)
+        public static void OCRTextClick(RemoteWebDriver driver, String text, int threshold, int timeout, 
+			bool shouldScroll=false, int maxScroll=5)
         {
             Console.WriteLine("Find: " + text);
             string command = "mobile:text:select";
             Dictionary<string, object> Parameters = new Dictionary<string, object>();
             Parameters.Add("content", text);
-            Parameters.Add("timeout", timeout.ToString());
-            if (threshold > 0)
+
+			if (!shouldScroll)
+			{ Parameters.Add("timeout", timeout.ToString());
+			}
+
+			if (threshold > 0)
                 Parameters.Add("threshold", threshold.ToString());
+
 			if (shouldScroll)
 			{
 				Parameters.Add("scrolling", "scroll");
+				Parameters.Add("maxscroll", maxScroll);
 				Parameters.Add("next", "SWIPE_UP");
 			}
 
