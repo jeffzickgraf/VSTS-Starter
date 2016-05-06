@@ -59,33 +59,14 @@ namespace MultiTestExecutor
 
 			DirectoryInfo testRunDirectory = CopyTestRunner(device, currentPath, runnerPath);
 
-			//Get device group again as a separate instance as we will remove other devices
-			//	and deserialize our JSON Device configuration that will be used by each test run
-			ParameterRetriever retriever = new ParameterRetriever();
-			PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
-
-			//drop other devices
-			testParams.Devices.RemoveAll(d => d.DeviceDetails.DeviceID != device.DeviceDetails.DeviceID);
-
-			//Now save to memory and then a filestream to disk
-			MemoryStream memoryStream = new MemoryStream();
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PerfectoTestParams));
-			serializer.WriteObject(memoryStream, testParams);
-
-			Console.WriteLine("Writing config file for " + device.DeviceDetails.Name ?? device.DeviceDetails.DeviceID);
-			var runConfigPath = testRunDirectory.FullName + "\\TestResources\\DevicesGroup\\" + SharedConstants.DeviceConfigFileName;
-			Directory.CreateDirectory(Path.GetDirectoryName(runConfigPath));
-			using (FileStream fileStream = new FileStream(runConfigPath, FileMode.Create, FileAccess.Write))
-			{
-				memoryStream.WriteTo(fileStream);
-			}
+			CloneDeviceListFile(device, baseProjectPath, testRunDirectory);
 
 			//Use the nunit3 console to run our tests
 			//arguments for nunit3 look like:
 			//		your-assembly-with-test-cases.dll --result=TestRun.xml;format=nunit2 --where "cat != AppiumTests"
 			//Using format=nunit2 for VSTS compatibility (it can't process nunit3 results)
 			var arguments = assemblyArgs + " --result=TestRun.xml;format=nunit2";
-			
+
 			string toSkip = GetTestsToSkipForDevice(device);
 
 			//if device config needs to skip -add a where clause to our console argument
@@ -108,6 +89,30 @@ namespace MultiTestExecutor
 			myProcess.StartInfo = myProcessStartInfo;
 			myProcess.OutputDataReceived += (sender, args) => OnDataReceived(args.Data);
 			myProcess.Start();
+		}
+
+		private static void CloneDeviceListFile(Device device, string baseProjectPath, DirectoryInfo testRunDirectory)
+		{
+			//Get device group again as a separate instance as we will remove other devices
+			//	and deserialize our JSON Device configuration that will be used by each test run
+			ParameterRetriever retriever = new ParameterRetriever();
+			PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
+
+			//drop other devices
+			testParams.Devices.RemoveAll(d => d.DeviceDetails.DeviceID != device.DeviceDetails.DeviceID);
+
+			//Now save to memory and then a filestream to disk
+			MemoryStream memoryStream = new MemoryStream();
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PerfectoTestParams));
+			serializer.WriteObject(memoryStream, testParams);
+
+			Console.WriteLine("Writing config file for " + device.DeviceDetails.Name ?? device.DeviceDetails.DeviceID);
+			var runConfigPath = testRunDirectory.FullName + "\\TestResources\\DevicesGroup\\" + SharedConstants.DeviceConfigFileName;
+			Directory.CreateDirectory(Path.GetDirectoryName(runConfigPath));
+			using (FileStream fileStream = new FileStream(runConfigPath, FileMode.Create, FileAccess.Write))
+			{
+				memoryStream.WriteTo(fileStream);
+			}
 		}
 
 		private static string GetTestsToSkipForDevice(Device device)

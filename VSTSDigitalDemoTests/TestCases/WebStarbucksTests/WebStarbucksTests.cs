@@ -82,6 +82,7 @@ namespace VSTSDigitalDemotests
 					if (WebDriver.Url == "http://www.starbucks.com/")
 					{
 						WebDriver.Navigate().GoToUrl("http://store.starbucks.com/");
+						Thread.Sleep(3000); //need a little time for URL to change before next assert
 					}
 				}
 
