@@ -72,7 +72,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 					PerfectoUtils.PutText(DriverInstance, "Password", Constants.STARBUCKSPWD, "", "");
 					PerfectoUtils.OCRImageClick(DriverInstance, @"PUBLIC:Jeff/Images/StarbucksSubmit.png");
 					
-					if (Checkpoint(NativeStarbucksObjects.Text.MakeEverySip, DriverInstance, 15))
+					if (Checkpoint(NativeStarbucksObjects.Text.MakeEverySip, DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, NativeStarbucksObjects.Text.NotRightNow, 0, 15);
 					}
@@ -82,7 +82,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 				{
 					DriverInstance.Context = Constants.VISUAL;
 					//1st time app usage - may get a prompt	
-					if (Checkpoint("Send You Notifications", DriverInstance, 15))
+					if (Checkpoint("Send You Notifications", DriverInstance, 8))
 					{
 						PerfectoUtils.OCRTextClick(DriverInstance, "Don't Allow", 0, 15);
 					}
