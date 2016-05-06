@@ -29,6 +29,8 @@ namespace VSTSDigitalDemoTests.TestResources
 			public const string SearchboxLink = "//a[@id='mobile-search-icon'] | //a[@href='#searchbox']";
 			public const string Searchbox = "//input[@id='searchinput'] | //input[@id='searchbox']";
 			public const string SearchSubmitButton = "//button[@id='btnSubmit'] | //button[@id='submit_search_util']";
+			public const string StarbucksStoreText = "//span[text()='Starbucks Store']";
+
 
 			//newsletter popup
 			public const string NewsLetterPopup = "//div[@id='signupnewsletter' and @class='popup1 show']";

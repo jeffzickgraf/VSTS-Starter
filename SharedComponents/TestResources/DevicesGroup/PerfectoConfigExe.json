@@ -2,12 +2,38 @@
   "devices": [
     {
       "device": {
+        "deviceID": "Win7InternetExplorer10",
+        "os": "Windows",
+        "osVersion": "7",
+        "browserName": "Internet Explorer",
+        "browserVersion": "10",
+        "name": "ie10",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
         "deviceID": "Win7Chrome50",
-        "os": "windows",
+        "os": "Windows",
         "osVersion": "7",
         "browserName": "Chrome",
         "browserVersion": "50",
-        "name": "chrome50",
+        "name": "Win7Chrome",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "Win8.1Chrome50",
+        "os": "Windows",
+        "osVersion": "8.1",
+        "browserName": "Chrome",
+        "browserVersion": "50",
+        "name": "Win8.1Chrome",
         "isDesktopBrowser": "true",
         "runNative": "false",
         "runWeb": "true"
@@ -32,20 +58,7 @@
         "runNative": "true",
         "runWeb": "true"
       }
-    },
-    {
-      "device": {
-        "deviceID": "81InternetExplorer11",
-        "os": "windows",
-        "osVersion": "8.1",
-        "browserName": "Internet Explorer",
-        "browserVersion": "11",
-        "name": "ie11",
-        "isDesktopBrowser": "true",
-        "runNative": "false",
-        "runWeb": "true"
-      }
-    },   
+    },       
     {
       "device": {
         "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",

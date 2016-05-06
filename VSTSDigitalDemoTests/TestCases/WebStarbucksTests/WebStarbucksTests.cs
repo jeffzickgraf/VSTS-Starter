@@ -81,14 +81,14 @@ namespace VSTSDigitalDemotests
 					//Sometimes the shop click is eaten and opens another menu so lets make sure to go to the shop if that happens										
 					if (WebDriver.Url == "http://www.starbucks.com/")
 					{
-						WebDriver.Navigate().GoToUrl("http://store.starbucks.com/");
-						Thread.Sleep(3000); //need a little time for URL to change before next assert
+						WebDriver.Navigate().GoToUrl("http://store.starbucks.com/");						
 					}
 				}
 
 				//Can't use visual analysis yet for desktop - so just verify via URL we are on correct page
-				var failMessage = string.Format("Expected starbucks store url but saw {0}", WebDriver.Url);
-				Assert.IsTrue(WebDriver.Url.Contains("store.starbucks.com"), failMessage);
+				var failMessage = "Expected starbucks store page but saw didn't find. Must not have made it to the store page";
+				var storeText = WebDriver.FindElementByXPath(WebStarbucksObjects.Elements.StarbucksStoreText);
+				Assert.IsTrue(storeText != null, failMessage);
 			}
 			catch (NoSuchElementException nsee)
 			{
