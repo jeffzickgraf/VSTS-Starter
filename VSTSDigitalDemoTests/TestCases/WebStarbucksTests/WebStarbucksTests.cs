@@ -76,26 +76,18 @@ namespace VSTSDigitalDemotests
 				
 				WebDriver.FindElementByXPath(WebStarbucksObjects.Nav.Shop).Click();
 				
-				if (IsMobileDevice)
-				{
-					//verify
-					Assert.IsTrue(Checkpoint(WebStarbucksObjects.TextCheckPoints.StarbucksStore, WebDriver),
-						"Expected to see " + WebStarbucksObjects.TextCheckPoints.StarbucksStore);
-
-					TakeTimerIfPossible("Starbucks Store loaded", WebDriver);
-				}
-				else
+				if (IsDeskTopBrowser)
 				{
 					//Sometimes the shop click is eaten and opens another menu so lets make sure to go to the shop if that happens										
 					if (WebDriver.Url == "http://www.starbucks.com/")
 					{
 						WebDriver.Navigate().GoToUrl("http://store.starbucks.com/");
 					}
-										
-					//Can't use visual analysis yet - so just verify via title we are on correct page
-					var failMessage = string.Format("Expected: {0} but saw {1}", WebStarbucksObjects.TextCheckPoints.StarbucksStoreTitle, WebDriver.Title);
-					Assert.IsTrue(WebDriver.Url.Contains("store.starbucks.com"), "Unexpected page.");
-				}				
+				}
+
+				//Can't use visual analysis yet for desktop - so just verify via URL we are on correct page
+				var failMessage = string.Format("Expected starbucks store url but saw {0}", WebDriver.Url);
+				Assert.IsTrue(WebDriver.Url.Contains("store.starbucks.com"), failMessage);
 			}
 			catch (NoSuchElementException nsee)
 			{

@@ -7,8 +7,8 @@
     <ProjectGuid>{D4E5AC51-EE35-4223-8D5E-D13373A4779D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MultiTestExecutor</RootNamespace>
-    <AssemblyName>MultiTestExecutor</AssemblyName>
+    <RootNamespace>ParallelDeviceExecutor</RootNamespace>
+    <AssemblyName>ParallelDeviceExecutor</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
