@@ -67,9 +67,7 @@ namespace VSTSDigitalDemotests
 				
 		[Test]
 		public void Case020_NavigateToStarbucksShop()
-		{
-			IWebElement field;
-
+		{		
 			try
 			{
 				OpenMenuIfNeeded();									
@@ -85,7 +83,7 @@ namespace VSTSDigitalDemotests
 					}
 				}
 
-				//Can't use visual analysis yet for desktop - so just verify via URL we are on correct page
+				//Can't use visual analysis yet for desktop - so verify via StoreText element
 				var failMessage = "Expected starbucks store page but saw didn't find. Must not have made it to the store page";
 				var storeText = WebDriver.FindElementByXPath(WebStarbucksObjects.Elements.StarbucksStoreText);
 				Assert.IsTrue(storeText != null, failMessage);

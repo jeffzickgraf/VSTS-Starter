@@ -142,14 +142,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 
 				var settingsText = "SETTINGS";
 				var signOutText = "SIGN OUT";
-
-				if (IsAndroid())
-				{
-					settingsText = "Settings";
-					signOutText = "Sign Out";
-				}
-					
-
+								
 				Assert.IsTrue(Checkpoint(settingsText, DriverInstance, 25), "Expected the Settings screen but didn't find");
 
 				PerfectoUtils.OCRTextClick(DriverInstance, signOutText, 0, 25, true);

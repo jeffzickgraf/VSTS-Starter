@@ -168,12 +168,16 @@ namespace VSTSDigitalDemoTests
 			String device = "Unknown";
 			try
 			{
+				if (!string.IsNullOrEmpty(CurrentDevice.DeviceDetails.Name))
+					return CurrentDevice.DeviceDetails.Name;
+				
 				Dictionary<String, Object> pars = new Dictionary<String, Object>();
 				pars.Add("property", "model");
 				device = (String)driver.ExecuteScript("mobile:handset:info", pars);
 			}
 			catch (Exception)
 			{
+				//Nothing to do here
 			}
 
 			return device;

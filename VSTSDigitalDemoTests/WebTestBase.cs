@@ -133,12 +133,15 @@ namespace VSTSDigitalDemoTests
 			
 			driver.Quit();						
 		}
-
+		
 		/// <summary>
 		/// The device's identifier for the test run.
 		/// </summary>
 		public static String GetDeviceModel(RemoteWebDriverExtended driver)
 		{
+			if (!string.IsNullOrEmpty(CurrentDevice.DeviceDetails.Name))
+				return CurrentDevice.DeviceDetails.Name;
+
 			Dictionary<String, Object> pars = new Dictionary<String, Object>();
 			pars.Add("property", "model");
 			String properties = (String)driver.ExecuteScript("mobile:handset:info", pars);
