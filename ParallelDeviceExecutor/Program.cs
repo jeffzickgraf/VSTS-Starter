@@ -4,19 +4,30 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 
 //This code copies files and an nunit console test runner to a folder for each device 
 //that is to be tested and then kicks off the tests
 
-namespace MultiTestExecutor
-{
+namespace ParallelDeviceExecutor
+{	
 	public class Program
 	{
+		private static string appID = "PerfectoParallelTestRunner";
+		private static ProcessObserver ParallelProcessObserver;
+		private static Object lockObject = new Object();
+		[STAThread]
 		public static void Main(string[] args)
 		{
 			try
 			{
+				ParallelProcessObserver = new ProcessObserver();
+
+				Trace.Listeners.Add(new TextWriterTraceListener("ParallelDeviceOutput.log", "myListener"));
+				
 				string assemblyArgs = "";
 				if (args.Length > 0)
 				{
@@ -37,17 +48,86 @@ namespace MultiTestExecutor
 				ParameterRetriever retriever = new ParameterRetriever();
 				PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
 
-				//Execute in parallel for each device
-				Parallel.ForEach(testParams.Devices, device => {
-					Console.WriteLine("Starting runner for " + device.DeviceDetails.Name);
-					StartTestRunner(device, assemblyArgs);
-				});
+				if (testParams.Devices.Count < 0)
+				{
+					Console.WriteLine("No devices found from JSON config file.");
+					Console.ReadKey();
+					return;
+				}
+
+				//Now create a mutex so that this console app can only be run 1 at a time.
+
+				// get application GUID as defined in AssemblyInfo.cs
+				string appGuid = "PerfectoParallelRunner-82678dc5439649959b6e0b686efb1222";
+
+				// unique id for global mutex - Global prefix means it is global to the machine
+				string mutexId = string.Format("Global\\{{{0}}}", appGuid);
+
+				// Need a place to store a return value in Mutex() constructor call
+				bool createdNew;
+
+				var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
+				var securitySettings = new MutexSecurity();
+				securitySettings.AddAccessRule(allowEveryoneRule);
+
+				using (var mutex = new Mutex(false, mutexId, out createdNew, securitySettings))
+				{
+					var hasHandle = false;
+					try
+					{
+						try
+						{
+							hasHandle = mutex.WaitOne(5000, false);
+							if (hasHandle == false)
+								throw new TimeoutException("Make sure another Test Process isn't already running.");
+						}
+						catch (AbandonedMutexException)
+						{
+							// Log the fact that the mutex was abandoned in another process, it will still get acquired
+							hasHandle = true;
+						}
+
+						// Perform your work here.
+						RunParallelExecutions(assemblyArgs, testParams);
+					}
+					finally
+					{
+						if (hasHandle)
+							mutex.ReleaseMutex();
+					}
+				}
 
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine("Error: " + ex.Message);
+				Console.ReadKey();
 				throw;
+			}
+		}
+
+		private static void RunParallelExecutions(string assemblyArgs, PerfectoTestParams testParams)
+		{
+			//Execute in parallel for each device
+			Parallel.ForEach(testParams.Devices, device =>
+			{
+				Console.WriteLine("Starting runner for " + device.DeviceDetails.Name);
+				StartTestRunner(device, assemblyArgs);
+			});
+
+			//Don't want to exit the program until all devices have processed and then we can release mutex
+			do
+			{
+				Thread.Sleep(10000);
+				Console.WriteLine(" --> Processing ... NUnit Runner count is: {0}", ParallelProcessObserver.GetStillRunningProcessCount());
+			}
+			while (getParallelCount() > 0);
+		}
+
+		private static int getParallelCount()
+		{
+			lock (lockObject) {
+				return ParallelProcessObserver.GetStillRunningProcessCount();
 			}
 		}
 
@@ -76,19 +156,29 @@ namespace MultiTestExecutor
 			}
 
 			Console.WriteLine("About to start nunit3-console.exe with the following arguments: " + arguments);
+			
+			Trace.TraceInformation("About to start nunit3-console.exe with the following arguments: " + arguments);
+			Trace.Flush();
 
-			Process myProcess = new Process();
-			ProcessStartInfo myProcessStartInfo
+
+			Process nunitRunnerProcess = new Process();
+			ProcessStartInfo nunitStartInfo
 				= new ProcessStartInfo(testRunDirectory.FullName
 				+ @"\nunit3-console.exe", arguments);
 
-			myProcessStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+			nunitStartInfo.WindowStyle = ProcessWindowStyle.Normal;
 			//Must set WorkingDirectory to execute from the location of the testrunner or it will pull from this exe's config
-			myProcessStartInfo.UseShellExecute = false;
-			myProcessStartInfo.WorkingDirectory = testRunDirectory.FullName;
-			myProcess.StartInfo = myProcessStartInfo;
-			myProcess.OutputDataReceived += (sender, args) => OnDataReceived(args.Data);
-			myProcess.Start();
+			nunitStartInfo.UseShellExecute = false;
+			nunitStartInfo.WorkingDirectory = testRunDirectory.FullName;
+			nunitRunnerProcess.StartInfo = nunitStartInfo;
+			nunitRunnerProcess.OutputDataReceived += (sender, args) => OnDataReceived(args.Data);
+			
+			nunitRunnerProcess.Start();
+
+			lock (lockObject)
+			{
+				ParallelProcessObserver.AddProcess(nunitRunnerProcess);
+			}
 		}
 
 		private static void CloneDeviceListFile(Device device, string baseProjectPath, DirectoryInfo testRunDirectory)
@@ -145,7 +235,9 @@ namespace MultiTestExecutor
 				return;
 			}
 
-			Console.WriteLine(data);			
+			Console.WriteLine(data);
+			Trace.TraceInformation(data);
+			Trace.Flush();
 		}
 
 		//Copies files needed for the testrunner into a device specific directory

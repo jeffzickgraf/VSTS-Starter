@@ -30,6 +30,8 @@ namespace VSTSDigitalDemoTests
 			string model = "Unknown device model";
 			try
 			{
+				Trace.Listeners.Add(new TextWriterTraceListener("AppiumTestCaseExecution.log", "appiumTestCaseListener"));
+
 				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
 				string host, user, password;
 				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out host, out user, out password);
