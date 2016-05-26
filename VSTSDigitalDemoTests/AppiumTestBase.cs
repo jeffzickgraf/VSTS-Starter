@@ -18,9 +18,13 @@ namespace VSTSDigitalDemoTests
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
 		protected static string TestCaseName;
+		protected static string BaseProjectPath;
 		protected static Device CurrentDevice;
 		protected static AppiumDriver<IWebElement> DriverInstance;
 		protected static string TestRunLocation;
+		protected static string Host;
+		protected static string Username;
+		protected static string Password;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -32,12 +36,12 @@ namespace VSTSDigitalDemoTests
 			{
 				Trace.Listeners.Add(new TextWriterTraceListener("AppiumTestCaseExecution.log", "appiumTestCaseListener"));
 
-				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
-				string host, user, password;
-				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out host, out user, out password);
+				BaseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
+				
+				SensitiveInformation.GetHostAndCredentials(BaseProjectPath, out Host, out Username, out Password);
 
 				ParameterRetriever testParams = new ParameterRetriever();
-				PerfectoTestingParameters = testParams.GetVSOExecParam(baseProjectPath, false);
+				PerfectoTestingParameters = testParams.GetVSOExecParam(BaseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
@@ -50,17 +54,17 @@ namespace VSTSDigitalDemoTests
 
 				DesiredCapabilities capabilities = new DesiredCapabilities();
 				capabilities.SetCapability("automationName", "Appium");
-				capabilities.SetCapability("user", user);
-				capabilities.SetCapability("password", password);
+				capabilities.SetCapability("user", Username);
+				capabilities.SetCapability("password", Password);
 				capabilities.SetCapability("newCommandTimeout", "120");
-				capabilities.SetPerfectoLabExecutionId(host);
+				capabilities.SetPerfectoLabExecutionId(Host);
 				capabilities.SetCapability("deviceName", CurrentDevice.DeviceDetails.DeviceID);
 				capabilities.SetCapability("scriptName", "Parallel-" + TestCaseName);
 
 				capabilities.SetCapability("windTunnelPersona", "Georgia");
 
 
-				var url = new Uri(string.Format("http://{0}/nexperience/perfectomobile/wd/hub", host));
+				var url = new Uri(string.Format("http://{0}/nexperience/perfectomobile/wd/hub", Host));
 				if (CurrentDevice.DeviceDetails.OS.ToUpperInvariant() == "IOS")
 				{
 					DriverInstance = new IOSDriver<IWebElement>(url, capabilities, new TimeSpan(0, 2, 0));
@@ -141,8 +145,9 @@ namespace VSTSDigitalDemoTests
 			string model = "unknown";
 			try
 			{
-				//get our model before we close driver
+				//get our model and executionId before we close driver
 				model = GetDeviceModel(driver);
+				String executionId = driver.Capabilities.GetCapability("executionId").ToString();
 				driver.Close();
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
@@ -153,6 +158,7 @@ namespace VSTSDigitalDemoTests
 				driver.DownloadReport(DownloadReportTypes.pdf, newPath + "\\" + model + " " + TestCaseName + " report");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.video, newPath + "\\" + model + " " + TestCaseName + " video", "flv");
 				//driver.DownloadAttachment(DownloadAttachmentTypes.image, "C:\\test\\report\\images", "jpg");
+				LogDeviceExecution(executionId);
 			}
 			catch (Exception ex)
 			{
@@ -160,6 +166,18 @@ namespace VSTSDigitalDemoTests
 			}
 			
 			driver.Quit();						
+		}
+
+		private static void LogDeviceExecution(string executionId)
+		{
+			//Returning and not recording for now until REST issue with validations can be troubleshot
+			return;
+
+			ExecutionRecorderParams recorderParams
+				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Appium,
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails);
+			ExecutionRecorder recorder = new ExecutionRecorder();
+			recorder.GetExecutionDetails(recorderParams).Wait();
 		}
 
 		/// <summary>

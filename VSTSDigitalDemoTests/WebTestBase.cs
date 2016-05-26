@@ -27,6 +27,7 @@ namespace VSTSDigitalDemoTests
 		protected static string TestCaseName;
 		protected static Device CurrentDevice;
 		protected static string TestRunLocation;
+		protected static string BaseProjectPath;
 		protected static string Host;
 		protected static string Username;
 		protected static string Password;
@@ -41,12 +42,12 @@ namespace VSTSDigitalDemoTests
 			{
 				Trace.Listeners.Add(new TextWriterTraceListener("webTestCaseExecution.log", "webTestCaseListener"));
 
-				string baseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
+				BaseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
 				
-				SensitiveInformation.GetHostAndCredentials(baseProjectPath, out Host, out Username, out Password);
+				SensitiveInformation.GetHostAndCredentials(BaseProjectPath, out Host, out Username, out Password);
 
 				ParameterRetriever testParams = new ParameterRetriever();
-				PerfectoTestingParameters = testParams.GetVSOExecParam(baseProjectPath, false);
+				PerfectoTestingParameters = testParams.GetVSOExecParam(BaseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 
@@ -155,118 +156,12 @@ namespace VSTSDigitalDemoTests
 		}
 
 		private static void LogDeviceExecution(string executionId)
-		{			
-			GetExecutionDetails(executionId).Wait();
-		}
-
-		static async Task GetExecutionDetails(string executionId)
 		{
-			using (var client = new HttpClient())
-			{
-				client.BaseAddress = new Uri("http://localhost:9000/");
-				client.DefaultRequestHeaders.Accept.Clear();
-				client.DefaultRequestHeaders.Add("Accept", "application/json");				
-
-				string executionUrl = string.Format("https://{0}/services/executions/{1}?operation=status&user={2}&password={3}", 
-													Host, 
-													executionId, 
-													Username, 
-													Password );
-
-				// HTTP GET
-				HttpResponseMessage response = await client.GetAsync(executionUrl);
-				if (response.IsSuccessStatusCode)
-				{
-					var executionJson = await response.Content.ReadAsStringAsync();// .ReadAsAsync<ExecutionDetails>();
-
-					JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
-					ExecutionDetails executionDetails = jsonSerializer.Deserialize<ExecutionDetails>(executionJson);
-
-					WriteReportDetails(executionDetails);
-				}				
-			}
-		}
-
-
-		private string mutexId = "PerfectoMobileWebTestsMutex";
-
-		private static void WriteReportDetails(ExecutionDetails details)
-		{
-			return;
-
-			//Todo: need to get this to write to excel or text file.
-
-			//We must use a global mutex here so we don't get lock contentions with other runs.
-
-			// get application GUID as defined in AssemblyInfo.cs
-			string appGuid = ((GuidAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false).GetValue(0)).Value.ToString();
-
-			// unique id for global mutex - Global prefix means it is global to the machine
-			string mutexId = string.Format("Global\\{{{0}}}", appGuid);
-
-			// Need a place to store a return value in Mutex() constructor call
-			bool createdNew;
-			var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
-			var securitySettings = new MutexSecurity();
-			securitySettings.AddAccessRule(allowEveryoneRule);
-
-			using (var mutex = new Mutex(false, mutexId, out createdNew, securitySettings))
-			{
-				var hasHandle = false;
-				try
-				{
-					try
-					{
-						hasHandle = mutex.WaitOne(12000, false);
-						if (hasHandle == false)
-							throw new TimeoutException("Timeout waiting for exclusive access");
-					}
-					catch (AbandonedMutexException)
-					{
-						// Log the fact that the mutex was abandoned in another process, it will still get acquired
-						hasHandle = true;
-					}
-
-					// Perform your work here.
-					string path = "WebTestsLog.csv";
-
-					if (!File.Exists(path))
-					{
-						// Create file with a header if none exists
-						using (StreamWriter sw = File.CreateText(path))
-						{
-							sw.WriteLine(string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", 
-														"ExecutionId", 
-														"ReportKey", 
-														"ScriptName",
-														"DeviceName",
-														"DeviceId",
-														"ExecutionStatus",
-														"FailedValidations",
-														"FailedActions"));
-						}
-					}
-
-					using (StreamWriter sw = File.AppendText(path))
-					{
-						var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}", 
-													details.executionId, 
-													details.reportKey, 
-													TestCaseName, 													
-													CurrentDevice.DeviceDetails.Name, 
-													CurrentDevice.DeviceDetails.DeviceID, 
-													details.status,
-													details.failedValidations,
-													details.failedActions);
-						sw.WriteLine(newLine);
-					}
-				}
-				finally
-				{
-					if (hasHandle)
-						mutex.ReleaseMutex();
-				}
-			}
+			ExecutionRecorderParams recorderParams 
+				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium, 
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails);
+			ExecutionRecorder recorder = new ExecutionRecorder();
+			recorder.GetExecutionDetails(recorderParams).Wait();			
 		}
 		
 		/// <summary>

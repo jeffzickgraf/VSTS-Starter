@@ -1,5 +1,84 @@
 {
-  "devices": [    
+  "devices": [
+    {
+      "device": {
+        "deviceID": "Win7InternetExplorer10",
+        "os": "Windows",
+        "osVersion": "7",
+        "browserName": "Internet Explorer",
+        "browserVersion": "10",
+        "name": "ie10",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "Win7Chrome50",
+        "os": "Windows",
+        "osVersion": "7",
+        "browserName": "Chrome",
+        "browserVersion": "50",
+        "name": "Win7Chrome",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "Win8.1Chrome50",
+        "os": "Windows",
+        "osVersion": "8.1",
+        "browserName": "Chrome",
+        "browserVersion": "50",
+        "name": "Win8.1Chrome",
+        "isDesktopBrowser": "true",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "0615F6F16FB13932",
+        "os": "Android",
+        "name": "GalaxyS6",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    }, 
+    {
+      "device": {
+        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
+        "os": "iOS",
+        "name": "iPhone 6 Plus",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    },       
+    {
+      "device": {
+        "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",
+        "os": "iOS",
+        "name": "iPhone 5",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "067C0546439C8F54",
+        "os": "Android",
+        "name": "Nexus 5",
+        "isDesktopBrowser": "false",
+        "runNative": "false",
+        "runWeb": "true"
+      }
+    },
     {
       "device": {
         "deviceID": "HT58ZJT00147",

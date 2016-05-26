@@ -25,5 +25,10 @@ namespace VSTSDigitalDemoTests.Utility
 		public string user { get; set; }
 		[DataMember]
 		public string completed { get; set; }
+
+		/// <summary>
+		/// Link to the downloadable report. This will be derived and set outside of a REST call.
+		/// </summary>
+		public string reportUrl { get; set; }
 	}
 }
