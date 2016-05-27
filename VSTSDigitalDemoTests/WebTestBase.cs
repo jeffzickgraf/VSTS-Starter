@@ -31,6 +31,8 @@ namespace VSTSDigitalDemoTests
 		protected static string Host;
 		protected static string Username;
 		protected static string Password;
+		protected static RemoteWebDriverExtended DriverInstance;
+		protected static int ErrorCount;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -93,8 +95,8 @@ namespace VSTSDigitalDemoTests
 
 				var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", Host));
 				RemoteWebDriverExtended driver = new RemoteWebDriverExtended(url, capabilities, new TimeSpan(0, 2, 0));
-				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));				
-
+				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
+				DriverInstance = driver;
 				return driver;
 			}
 			catch (Exception e)
@@ -136,7 +138,7 @@ namespace VSTSDigitalDemoTests
 				model = GetDeviceModel(driver);
 
 				//get device execution identifier
-				String executionId = driver.Capabilities.GetCapability("executionId").ToString();				
+				String executionId = GetExecutionId(driver);
 				driver.Close();
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
@@ -157,15 +159,84 @@ namespace VSTSDigitalDemoTests
 			driver.Quit();						
 		}
 
+		private static string GetExecutionId(RemoteWebDriverExtended driver)
+		{
+			string executionId = Constants.UNKNOWN;
+			try
+			{
+				return driver.Capabilities.GetCapability("executionId").ToString();
+			}
+			catch (Exception)
+			{
+				//Couldn't get it just return unknown
+			}
+			return executionId;
+		}
+
 		private static void LogDeviceExecution(string executionId)
 		{
-			ExecutionRecorderParams recorderParams 
-				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium, 
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails);
 			ExecutionRecorder recorder = new ExecutionRecorder();
-			recorder.GetAndRecordExecutionRun(recorderParams);			
+			ExecutionRecorderParams recorderParams
+				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium,
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+
+			if (executionId == Constants.UNKNOWN)
+			{
+				//No id to get details - need to create our own details
+				ExecutionDetails details = new ExecutionDetails();
+				details.executionId = executionId;
+				details.status = Constants.UNKNOWN;
+				details.description = "Tried to get execution details but failed.";
+				details.reason = Constants.UNKNOWN;
+				recorder.RecordExecutionRun(recorderParams, details);
+				return;
+			}
+
+			//We have an executionId so try to get run results.
+			recorder.GetAndRecordExecutionRun(recorderParams);
 		}
-		
+
+		private static void LogFailedDeviceExecution(string executionId, string status, string description)
+		{
+			ExecutionRecorder recorder = new ExecutionRecorder();
+			ExecutionRecorderParams recorderParams
+				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium,
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+			ExecutionDetails details = new ExecutionDetails();
+
+			if (executionId == Constants.UNKNOWN)
+			{
+				details.executionId = executionId;
+			}
+			else
+			{
+				//although we will be overwriting some values - try to get other details like reportKey
+				details = recorder.GetExecutionDetails(recorderParams).Result;
+			}
+
+			details.status = status;
+			details.description = description;
+			details.reason = status;
+			details.testMethodName = GetTestMethodName();
+
+			recorder.RecordExecutionRun(recorderParams, details);
+		}
+
+		private static string GetTestMethodName()
+		{
+			string testMethod = "Unknown";
+			try
+			{
+				testMethod = TestContext.CurrentContext.Test.Name;
+			}
+			catch (Exception)
+			{
+				//ignore as we knew this may happen				
+			}
+			return testMethod;
+		}
+
+
 		/// <summary>
 		/// The device's identifier for the test run.
 		/// </summary>
@@ -185,10 +256,17 @@ namespace VSTSDigitalDemoTests
 			HandleNoElementException(nsee, GetDeviceModel(driver));			
 		}
 
-		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel)
+		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel, bool shouldThrow = true)
 		{
-			Console.WriteLine(deviceModel+ " Element not found: " + nsee.Message);
-			throw new NoSuchElementException(deviceModel + " Element not found" + nsee.Message, nsee);
+			var message = deviceModel + "  in Test: " + TestContext.CurrentContext.Test.Name + " had Element not found: " + nsee.Message;
+			Console.WriteLine(message);
+			if (shouldThrow)
+			{
+				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
+				ErrorCount++;
+				throw new NoSuchElementException(message, nsee);
+			}
+			
 		}
 
 		protected static void HandleGeneralException(Exception e, RemoteWebDriverExtended driver)
@@ -198,10 +276,16 @@ namespace VSTSDigitalDemoTests
 
 		protected static void HandleGeneralException(Exception e, string deviceModel, bool shouldThrow = true)
 		{
-			Console.WriteLine(deviceModel + " Encountered an error: " + e.Message + "stacktrace: " + e.StackTrace);
+			var message = deviceModel + " Encountered an error: " + e.Message + "stacktrace: " + e.StackTrace;
+			Console.WriteLine(message);
 
 			if (shouldThrow)
-				throw new Exception(deviceModel + " Encountered an error: " + e.Message, e);
+			{
+				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
+				ErrorCount++;
+				throw new Exception(message, e); 
+			}
+				
 		}
 
 		protected bool IsDeskTopBrowser
