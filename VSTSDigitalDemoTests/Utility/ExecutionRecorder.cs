@@ -21,13 +21,18 @@ namespace VSTSDigitalDemoTests.Utility
 	/// </summary>
 	public class ExecutionRecorder
 	{
-		public async Task GetExecutionDetails(ExecutionRecorderParams recorderParams)
+		public void GetAndRecordExecutionRun(ExecutionRecorderParams recorderParams)
 		{
 
 			string mutexId = recorderParams.ExecutionTestType == TestType.Appium ? "PerfectoMobileAppiumTestsMutex" : "PerfectoMobileSeleniumTestsMutex";
 			//Make sure its absolutely unique
 			mutexId += "eb6be9caec214a38bd98eb5287bd7438";
+			WriteReportDetails(GetExecutionDetails(recorderParams).Result, recorderParams, mutexId);
+		}
 
+		public async Task<ExecutionDetails> GetExecutionDetails(ExecutionRecorderParams recorderParams)
+		{
+			ExecutionDetails executionDetails = null; 
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = new Uri("http://localhost:9000/");
@@ -44,20 +49,73 @@ namespace VSTSDigitalDemoTests.Utility
 				HttpResponseMessage response = await client.GetAsync(executionUrl);
 				if (response.IsSuccessStatusCode)
 				{
-					var executionJson = await response.Content.ReadAsStringAsync();// .ReadAsAsync<ExecutionDetails>();
+					var executionJson = await response.Content.ReadAsStringAsync();
 
 					JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
-					ExecutionDetails executionDetails = jsonSerializer.Deserialize<ExecutionDetails>(executionJson);
+					executionDetails = jsonSerializer.Deserialize<ExecutionDetails>(executionJson);
 
 					//Add a report URL
 					var reportUrlFormat = "=HYPERLINK(\"https://{0}/services/reports/{1}?operation=download&user={2}&password={3}&format=html\")";
 					var reportUrl = string.Format(reportUrlFormat, recorderParams.Host, executionDetails.reportKey, recorderParams.UserName, recorderParams.Password);
 					executionDetails.reportUrl = reportUrl;
-					WriteReportDetails(executionDetails, recorderParams, mutexId);
+					executionDetails.executionDetailsUrl = executionUrl;
+				}
+				else
+				{
+					executionDetails = new ExecutionDetails();
+					executionDetails.completed = Constants.UNKNOWN;
+					executionDetails.executionId = recorderParams.ExecutionId;
+					executionDetails.status = Constants.UNKNOWN;
+					executionDetails.description = "Call to get execution details failed. Status was " + response.StatusCode;
+					executionDetails.reason = Constants.UNKNOWN;
+				}
+
+				if (executionDetails.status == Constants.COMPLETED && recorderParams.UnhandledErrorCount>0)
+				{
+					var message = string.Format("Completed with {0} unhandled errors", recorderParams.UnhandledErrorCount);
+					executionDetails.status = message;
+					executionDetails.description = message;
 				}
 			}
+			return executionDetails;
 		}
-				
+
+		public void RecordExecutionRun(ExecutionRecorderParams recorderParams, ExecutionDetails executionDetails)
+		{
+
+			string mutexId = GetMutexId(recorderParams.ExecutionTestType);
+
+			//Add a report URL
+			var reportUrlFormat = "=HYPERLINK(\"https://{0}/services/reports/{1}?operation=download&user={2}&password={3}&format=html\")";
+			var reportUrl = string.Format(reportUrlFormat, recorderParams.Host, executionDetails.reportKey, recorderParams.UserName, recorderParams.Password);
+
+
+			if (!string.IsNullOrEmpty(executionDetails.executionId))
+			{
+				string executionUrl = string.Format("https://{0}/services/executions/{1}?operation=status&user={2}&password={3}",
+													recorderParams.Host,
+													recorderParams.ExecutionId,
+													recorderParams.UserName,
+													recorderParams.Password);
+				executionDetails.executionDetailsUrl = executionUrl;
+			}
+
+			if(!string.IsNullOrEmpty(executionDetails.reportKey))
+			{
+				executionDetails.reportUrl = reportUrl;
+			}
+									
+			WriteReportDetails(executionDetails, recorderParams, mutexId);
+		}
+
+		private string GetMutexId(TestType executionTestType)
+		{
+			string mutexId = executionTestType == TestType.Appium ? "PerfectoMobileAppiumTestsMutex" : "PerfectoMobileSeleniumTestsMutex";
+			//Make sure its absolutely unique
+			mutexId += "eb6be9caec214a38bd98eb5287bd7438";
+			return mutexId;
+		}
+
 		private void WriteReportDetails(ExecutionDetails details, ExecutionRecorderParams recorderParams, string mutexId)
 		{
 			//We must use a global mutex here so we don't get lock contentions with other runs.
@@ -89,9 +147,12 @@ namespace VSTSDigitalDemoTests.Utility
 					}
 
 					// !!!!!!! Perform your work here.
-
-					string logName = recorderParams.ExecutionTestType == TestType.Appium ? "AppiumTestsLog.csv" : "SeleniumTestsLog.csv";
-					string path = recorderParams.BaseProjectPath + @"\RunReports\" + logName;
+					//Get the run identifier that ties parallel runs together - if none, just use now date
+					string runIdentifier = recorderParams.CurrentDevice.RunIdentifier ?? string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now); 
+					string logName = recorderParams.ExecutionTestType == TestType.Appium ? "AppiumTestsLog" : "SeleniumTestsLog";
+					string logFileName = string.Format("{0}-{1}.csv", logName,	runIdentifier);
+					
+					string path = recorderParams.BaseProjectPath + @"\RunReports\" + logFileName;
 
 					//---Note: if you receive an exception here - You may need to run Visual Studio with Administrator priveleges
 					//			Just right click Visual Studio from the Start Menu and launch as Administrator
@@ -100,31 +161,33 @@ namespace VSTSDigitalDemoTests.Utility
 						// Create file with a header if none exists
 						using (StreamWriter sw = File.CreateText(path))
 						{
-							sw.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+							sw.WriteLine(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
 														"ExecutionId",
 														"ReportKey",
 														"ScriptName",
 														"DeviceName",
 														"DeviceId",
 														"ExecutionStatus",
-														"FailedValidations",
-														"FailedActions",
-														"ReportDownloadLink"));
+														"TestMethodName",
+														"Description",
+														"ReportDownloadLink",
+														"ExecutionDetailsLink"));
 						}
 					}
 
 					using (StreamWriter sw = File.AppendText(path))
 					{
-						var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}",
+						var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
 													details.executionId,
 													details.reportKey,
 													recorderParams.TestCaseName,
 													recorderParams.CurrentDevice.Name,
 													recorderParams.CurrentDevice.DeviceID,
 													details.status,
-													details.failedValidations,
-													details.failedActions,
-													details.reportUrl);
+													details.testMethodName,
+													"\"" + details.description + "\"",
+													details.reportUrl,
+													details.executionDetailsUrl);
 						sw.WriteLine(newLine);
 					}
 				}

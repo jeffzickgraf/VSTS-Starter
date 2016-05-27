@@ -3,6 +3,7 @@ using SharedComponents.Parameters;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -15,15 +16,18 @@ using System.Threading.Tasks;
 namespace ParallelDeviceExecutor
 {	
 	public class Program
-	{
-		private static string appID = "PerfectoParallelTestRunner";
+	{		
 		private static ProcessObserver ParallelProcessObserver;
-		private static Object lockObject = new Object();
+		private static Object LockObject = new Object();
+		private static string RunIdentifier;
 		[STAThread]
 		public static void Main(string[] args)
 		{
 			try
 			{
+				//Allows us to group device runs for logging purposes
+				RunIdentifier = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
+
 				ParallelProcessObserver = new ProcessObserver();
 
 				Trace.Listeners.Add(new TextWriterTraceListener("ParallelDeviceOutput.log", "myListener"));
@@ -126,7 +130,7 @@ namespace ParallelDeviceExecutor
 
 		private static int getParallelCount()
 		{
-			lock (lockObject) {
+			lock (LockObject) {
 				return ParallelProcessObserver.GetStillRunningProcessCount();
 			}
 		}
@@ -175,7 +179,7 @@ namespace ParallelDeviceExecutor
 			
 			nunitRunnerProcess.Start();
 
-			lock (lockObject)
+			lock (LockObject)
 			{
 				ParallelProcessObserver.AddProcess(nunitRunnerProcess);
 			}
@@ -190,6 +194,9 @@ namespace ParallelDeviceExecutor
 
 			//drop other devices
 			testParams.Devices.RemoveAll(d => d.DeviceDetails.DeviceID != device.DeviceDetails.DeviceID);
+
+			//Add our run identifier to the device details
+			testParams.Devices.FirstOrDefault(d => d.DeviceDetails.DeviceID == device.DeviceDetails.DeviceID).DeviceDetails.RunIdentifier = RunIdentifier;
 
 			//Now save to memory and then a filestream to disk
 			MemoryStream memoryStream = new MemoryStream();

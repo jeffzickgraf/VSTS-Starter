@@ -15,9 +15,11 @@ namespace VSTSDigitalDemoTests.Utility
 		public string BaseProjectPath { get; set; }
 		public string TestCaseName { get; set; }
 		public DeviceDetails CurrentDevice { get; set; }
+		public int UnhandledErrorCount { get; set; }
 
 		public ExecutionRecorderParams(string executionId, string host, string username, string password, 
-			TestType executionTestType, string baseProjectPath, string testCaseName, DeviceDetails currentDevice)
+			TestType executionTestType, string baseProjectPath, string testCaseName, DeviceDetails currentDevice, 
+			int errorCount = 0)
 		{
 			ExecutionId = executionId;
 			Host = host;
@@ -27,6 +29,7 @@ namespace VSTSDigitalDemoTests.Utility
 			BaseProjectPath = baseProjectPath;
 			TestCaseName = testCaseName;
 			CurrentDevice = currentDevice;
+			UnhandledErrorCount = errorCount;
 		}
 
 	}

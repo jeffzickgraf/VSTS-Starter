@@ -25,13 +25,13 @@ namespace VSTSDigitalDemoTests
 		protected static string Host;
 		protected static string Username;
 		protected static string Password;
+		protected static int ErrorCount;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
 		/// </summary>		
 		protected static AppiumDriver<IWebElement> InitializeDriver()
 		{			
-			string model = "Unknown device model";
 			try
 			{
 				Trace.Listeners.Add(new TextWriterTraceListener("AppiumTestCaseExecution.log", "appiumTestCaseListener"));
@@ -44,11 +44,11 @@ namespace VSTSDigitalDemoTests
 				PerfectoTestingParameters = testParams.GetVSOExecParam(BaseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
+				if (string.IsNullOrEmpty(CurrentDevice.DeviceDetails.RunIdentifier))
+					CurrentDevice.DeviceDetails.RunIdentifier = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
 
 				CheckForValidDeviceConfiguration();
-
-				model = CurrentDevice.DeviceDetails.Name ?? "Unknown device Model";
-
+							
 				Trace.Listeners.Add(new ConsoleTraceListener());
 				Trace.AutoFlush = true;
 
@@ -88,6 +88,7 @@ namespace VSTSDigitalDemoTests
 				var message = string.Format("Failed to aqcuire new driver instance for {0} with message {1} and stacktrace {2}",
 					CurrentDevice, ex.Message, ex.StackTrace);
 				Console.WriteLine(message);
+				
 				throw new Exception(message, ex);
 			}			
 		}
@@ -147,7 +148,7 @@ namespace VSTSDigitalDemoTests
 			{
 				//get our model and executionId before we close driver
 				model = GetDeviceModel(driver);
-				String executionId = driver.Capabilities.GetCapability("executionId").ToString();
+				String executionId = GetExecutionId(driver);
 				driver.Close();
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
@@ -168,16 +169,82 @@ namespace VSTSDigitalDemoTests
 			driver.Quit();						
 		}
 
+		private static string GetExecutionId(AppiumDriver<IWebElement> driver)
+		{
+			string executionId = Constants.UNKNOWN;
+			try
+			{
+				return driver.Capabilities.GetCapability("executionId").ToString();
+			}
+			catch (Exception)
+			{
+				//Couldn't get it just return unknown
+			}
+			return executionId;
+		}
+
+
 		private static void LogDeviceExecution(string executionId)
 		{
-			//Returning and not recording for now until REST issue with validations can be troubleshot
-			return;
-
+			ExecutionRecorder recorder = new ExecutionRecorder();
 			ExecutionRecorderParams recorderParams
 				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Appium,
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails);
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+
+			if (executionId == Constants.UNKNOWN)
+			{
+				//No id to get details - need to create our own details
+				ExecutionDetails details = new ExecutionDetails();
+				details.executionId = executionId;
+				details.status = Constants.UNKNOWN;
+				details.description = "Tried to get execution details but failed.";
+				details.reason = Constants.UNKNOWN;
+				recorder.RecordExecutionRun(recorderParams, details);
+				return;
+			}
+
+			//We have an executionId so try to get run results.
+			recorder.GetAndRecordExecutionRun(recorderParams);
+		}
+
+		private static void LogFailedDeviceExecution(string executionId, string status, string description)
+		{
 			ExecutionRecorder recorder = new ExecutionRecorder();
-			recorder.GetExecutionDetails(recorderParams).Wait();
+			ExecutionRecorderParams recorderParams
+				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Appium,
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+			ExecutionDetails details = new ExecutionDetails();
+
+			if (executionId == Constants.UNKNOWN)
+			{
+				details.executionId = executionId;
+			}
+			else
+			{
+				//although we will be overwriting some values - try to get other details like reportKey
+				details = recorder.GetExecutionDetails(recorderParams).Result;
+			}
+
+			details.status = status;
+			details.description = description;
+			details.reason = status;
+			details.testMethodName = GetTestMethodName();
+
+			recorder.RecordExecutionRun(recorderParams, details);
+		}
+
+		private static string GetTestMethodName()
+		{
+			string testMethod = "Unknown";
+			try
+			{
+				testMethod = TestContext.CurrentContext.Test.Name;
+			}
+			catch (Exception)
+			{
+				//ignore as we knew this may happen				
+			}
+			return testMethod;
 		}
 
 		/// <summary>
@@ -210,9 +277,13 @@ namespace VSTSDigitalDemoTests
 
 		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel, bool shouldThrow = true)
 		{
-			Console.WriteLine(deviceModel + " Element not found: " + nsee.Message);
-			if(shouldThrow)
-				throw new NoSuchElementException(deviceModel + " Element not found" + nsee.Message, nsee);
+			var message = deviceModel + "  in Test: " + TestContext.CurrentContext.Test.Name + " had Element not found: " + nsee.Message;
+			if (shouldThrow)
+			{
+				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
+				ErrorCount++;
+				throw new NoSuchElementException(message, nsee);
+			}
 		}
 
 		protected static void HandleGeneralException(Exception e, AppiumDriver<IWebElement> driver)
@@ -222,12 +293,18 @@ namespace VSTSDigitalDemoTests
 
 		protected static void HandleGeneralException(Exception e, string deviceModel, bool shouldThrow = true)
 		{
-			Console.WriteLine(deviceModel + " Encountered an error: " + e.Message + "stacktrace: " + e.StackTrace);
+			var message = deviceModel + " Encountered an error in : " + TestContext.CurrentContext.Test.Name + " with message: " + e.Message + "stacktrace: " + e.StackTrace;
 
+			Console.WriteLine(message);
+			
 			if (shouldThrow)
-				throw new Exception(deviceModel + " Encountered an error: " + e.Message, e);
+			{				
+				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
+				ErrorCount++;
+				throw new Exception();
+			}
 		}
-
+		
 		protected bool IsDeskTopBrowser
 		{
 			get { return CurrentDevice.DeviceDetails.IsDesktopBrowser; }

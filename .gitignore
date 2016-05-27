@@ -8,6 +8,7 @@ appsettings.config
 TestResults/
 **/*report.pdf
 *report.pdf
+*.csv
 
 # TestRunner Runs
 **/TestRuns/*

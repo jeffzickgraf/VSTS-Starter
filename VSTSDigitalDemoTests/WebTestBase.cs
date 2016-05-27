@@ -50,6 +50,8 @@ namespace VSTSDigitalDemoTests
 				PerfectoTestingParameters = testParams.GetVSOExecParam(BaseProjectPath, false);
 
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
+				if (string.IsNullOrEmpty(CurrentDevice.DeviceDetails.RunIdentifier))
+					CurrentDevice.DeviceDetails.RunIdentifier = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
 
 				CheckForValidConfiguration();
 
@@ -161,7 +163,7 @@ namespace VSTSDigitalDemoTests
 				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium, 
 				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails);
 			ExecutionRecorder recorder = new ExecutionRecorder();
-			recorder.GetExecutionDetails(recorderParams).Wait();			
+			recorder.GetAndRecordExecutionRun(recorderParams);			
 		}
 		
 		/// <summary>

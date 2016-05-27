@@ -45,6 +45,12 @@ namespace SharedComponents.Parameters
 		[DataMember(Name = "runWeb")]
 		public bool RunWeb { get; set; }
 
+		/// <summary>
+		/// This is used to keep track of what run the device belongs to if running parallel executions.
+		/// </summary>
+		[DataMember(Name = "runIdentifier")]
+		public string RunIdentifier { get; set; }
+
 		public DeviceDetails(string deviceID, string os, string osVersion, string name, string browserName, 
 			string browserVersion, bool isDesktopBrowser = false, bool runNative = false, bool runWeb = false)
 		{

@@ -10,6 +10,8 @@
 		internal static readonly string ANDROID = "ANDROID";
 		internal static readonly string STARBUCKSUSER = "jeffzperfecto@gmail.com";
 		internal static readonly string STARBUCKSPWD = "Perfecto4me!";
-
+		internal static readonly string UNKNOWN = "Unknown";
+		internal static readonly string UNHANDLEDEX = "Unhandled Exception Encountered";
+		internal static readonly string COMPLETED = "Completed";
 	}
 }
