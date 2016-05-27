@@ -41,11 +41,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 		{
 			DriverInstance.Context = Constants.VISUAL;
 			try
-			{
-				//todo: Remove this test code
-				DriverInstance.Context = Constants.NATIVEAPP;
-				DriverInstance.FindElementByXPath("//DoesnotExist");
-
+			{		
 				if (IsLoggedIn())
 				{
 					Logout();
