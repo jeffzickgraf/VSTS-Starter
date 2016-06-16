@@ -141,6 +141,7 @@
     <Compile Include="AppiumTestBase.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utility\ExecutionDetails.cs" />
+    <Compile Include="Utility\ExecutionError.cs" />
     <Compile Include="Utility\ExecutionRecorder.cs" />
     <Compile Include="Utility\ExecutionRecorderParams.cs" />
     <Compile Include="Utility\SensitiveInformation.cs" />

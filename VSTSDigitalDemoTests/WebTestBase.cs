@@ -8,19 +8,9 @@ using System.IO;
 using System.Linq;
 using VSTSDigitalDemoTests.Utility;
 using NUnit.Framework;
-using System.Threading;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using System.Security.Principal;
-using System.Reflection;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Runtime.Serialization.Json;
-using System.Web.Script.Serialization;
 
 namespace VSTSDigitalDemoTests
-{	
+{
 	public abstract class WebTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
@@ -31,8 +21,8 @@ namespace VSTSDigitalDemoTests
 		protected static string Host;
 		protected static string Username;
 		protected static string Password;
-		protected static RemoteWebDriverExtended DriverInstance;
-		protected static int ErrorCount;
+		protected static RemoteWebDriverExtended DriverInstance;		
+		protected static List<ExecutionError> ExecutionErrors;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -44,6 +34,7 @@ namespace VSTSDigitalDemoTests
 			{
 				Trace.Listeners.Add(new TextWriterTraceListener("webTestCaseExecution.log", "webTestCaseListener"));
 
+				ExecutionErrors = new List<ExecutionError>();
 				BaseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
 				
 				SensitiveInformation.GetHostAndCredentials(BaseProjectPath, out Host, out Username, out Password);
@@ -101,7 +92,7 @@ namespace VSTSDigitalDemoTests
 			}
 			catch (Exception e)
 			{
-				HandleGeneralException(e, model);
+				HandleGeneralException(e, DriverInstance);
 			}
 			return null;
 		}
@@ -153,7 +144,11 @@ namespace VSTSDigitalDemoTests
 			}
 			catch (Exception ex)
 			{
-				HandleGeneralException(ex, model, false);
+				var message = string.Format("Failed to aqcuire new driver instance for {0} with message {1} and stacktrace {2}",
+					CurrentDevice, ex.Message, ex.StackTrace);
+				Console.WriteLine(message);
+
+				HandleGeneralException(ex, DriverInstance, false);
 			}
 			
 			driver.Quit();						
@@ -178,7 +173,7 @@ namespace VSTSDigitalDemoTests
 			ExecutionRecorder recorder = new ExecutionRecorder();
 			ExecutionRecorderParams recorderParams
 				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium,
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ExecutionErrors);
 
 			if (executionId == Constants.UNKNOWN)
 			{
@@ -194,33 +189,7 @@ namespace VSTSDigitalDemoTests
 
 			//We have an executionId so try to get run results.
 			recorder.GetAndRecordExecutionRun(recorderParams);
-		}
-
-		private static void LogFailedDeviceExecution(string executionId, string status, string description)
-		{
-			ExecutionRecorder recorder = new ExecutionRecorder();
-			ExecutionRecorderParams recorderParams
-				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Selenium,
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
-			ExecutionDetails details = new ExecutionDetails();
-
-			if (executionId == Constants.UNKNOWN)
-			{
-				details.executionId = executionId;
-			}
-			else
-			{
-				//although we will be overwriting some values - try to get other details like reportKey
-				details = recorder.GetExecutionDetails(recorderParams).Result;
-			}
-
-			details.status = status;
-			details.description = description;
-			details.reason = status;
-			details.testMethodName = GetTestMethodName();
-
-			recorder.RecordExecutionRun(recorderParams, details);
-		}
+		}		
 
 		private static string GetTestMethodName()
 		{
@@ -242,48 +211,55 @@ namespace VSTSDigitalDemoTests
 		/// </summary>
 		public static String GetDeviceModel(RemoteWebDriverExtended driver)
 		{
-			if (!string.IsNullOrEmpty(CurrentDevice.DeviceDetails.Name))
-				return CurrentDevice.DeviceDetails.Name;
+			try
+			{
+				if (!string.IsNullOrEmpty(CurrentDevice.DeviceDetails.Name))
+					return CurrentDevice.DeviceDetails.Name;
 
-			Dictionary<String, Object> pars = new Dictionary<String, Object>();
-			pars.Add("property", "model");
-			String properties = (String)driver.ExecuteScript("mobile:handset:info", pars);
-			return properties;			
+				Dictionary<String, Object> pars = new Dictionary<String, Object>();
+				pars.Add("property", "model");
+				String properties = (String)driver.ExecuteScript("mobile:handset:info", pars);
+				return properties;
+			}
+			catch (Exception)
+			{
+				return Constants.UNKNOWN;
+			}
 		}
 
 		protected static void HandleNoElementException(NoSuchElementException nsee, RemoteWebDriverExtended driver)
 		{
-			HandleNoElementException(nsee, GetDeviceModel(driver));			
+			HandleNoElementException(nsee, driver, false);			
 		}
 
-		protected static void HandleNoElementException(NoSuchElementException nsee, string deviceModel, bool shouldThrow = true)
+		protected static void HandleNoElementException(NoSuchElementException nsee, RemoteWebDriverExtended driver, bool shouldThrow = true)
 		{
-			var message = deviceModel + "  in Test: " + TestContext.CurrentContext.Test.Name + " had Element not found: " + nsee.Message;
-			Console.WriteLine(message);
+			var model = GetDeviceModel(driver);
+			var message = model + "  in Test: " + GetTestMethodName() + " had Element not found: " + nsee.Message;
+			Console.WriteLine(message + " stacktrace: " + nsee.StackTrace);
 			if (shouldThrow)
 			{
-				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
-				ErrorCount++;
-				throw new NoSuchElementException(message, nsee);
-			}
-			
+				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), nsee));
+				throw nsee;
+			}			
 		}
+		
 
 		protected static void HandleGeneralException(Exception e, RemoteWebDriverExtended driver)
 		{
-			HandleGeneralException(e, (GetDeviceModel(driver)));
+			HandleGeneralException(e, driver, false);
 		}
 
-		protected static void HandleGeneralException(Exception e, string deviceModel, bool shouldThrow = true)
+		protected static void HandleGeneralException(Exception e, RemoteWebDriverExtended driver, bool shouldThrow = true)
 		{
-			var message = deviceModel + " Encountered an error: " + e.Message + "stacktrace: " + e.StackTrace;
-			Console.WriteLine(message);
+			var model = GetDeviceModel(driver);
+			var message = model + " Encountered an error: " + e.Message;
+			Console.WriteLine(message + " stacktrace: " + e.StackTrace);
 
 			if (shouldThrow)
 			{
-				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
-				ErrorCount++;
-				throw new Exception(message, e); 
+				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), e));
+				throw e; 
 			}
 				
 		}

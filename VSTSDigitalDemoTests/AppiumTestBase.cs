@@ -25,7 +25,7 @@ namespace VSTSDigitalDemoTests
 		protected static string Host;
 		protected static string Username;
 		protected static string Password;
-		protected static int ErrorCount;
+		protected static List<ExecutionError> ExecutionErrors;
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -36,6 +36,7 @@ namespace VSTSDigitalDemoTests
 			{
 				Trace.Listeners.Add(new TextWriterTraceListener("AppiumTestCaseExecution.log", "appiumTestCaseListener"));
 
+				ExecutionErrors = new List<ExecutionError>();
 				BaseProjectPath = Path.GetFullPath(Path.Combine(TestRunLocation, @"..\..\..\"));
 				
 				SensitiveInformation.GetHostAndCredentials(BaseProjectPath, out Host, out Username, out Password);
@@ -46,11 +47,14 @@ namespace VSTSDigitalDemoTests
 				CurrentDevice = PerfectoTestingParameters.Devices.FirstOrDefault();
 				if (string.IsNullOrEmpty(CurrentDevice.DeviceDetails.RunIdentifier))
 					CurrentDevice.DeviceDetails.RunIdentifier = string.Format("{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
-
+				
 				CheckForValidDeviceConfiguration();
 							
 				Trace.Listeners.Add(new ConsoleTraceListener());
 				Trace.AutoFlush = true;
+
+				var runMessage = string.Format("Starting test runs for {0} with RunId of {1}", CurrentDevice.DeviceDetails.Name, CurrentDevice.DeviceDetails.RunIdentifier);
+				Trace.WriteLine(runMessage);
 
 				DesiredCapabilities capabilities = new DesiredCapabilities();
 				capabilities.SetCapability("automationName", "Appium");
@@ -88,7 +92,6 @@ namespace VSTSDigitalDemoTests
 				var message = string.Format("Failed to aqcuire new driver instance for {0} with message {1} and stacktrace {2}",
 					CurrentDevice, ex.Message, ex.StackTrace);
 				Console.WriteLine(message);
-				
 				throw new Exception(message, ex);
 			}			
 		}
@@ -189,7 +192,7 @@ namespace VSTSDigitalDemoTests
 			ExecutionRecorder recorder = new ExecutionRecorder();
 			ExecutionRecorderParams recorderParams
 				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Appium,
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
+				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ExecutionErrors);
 
 			if (executionId == Constants.UNKNOWN)
 			{
@@ -205,32 +208,6 @@ namespace VSTSDigitalDemoTests
 
 			//We have an executionId so try to get run results.
 			recorder.GetAndRecordExecutionRun(recorderParams);
-		}
-
-		private static void LogFailedDeviceExecution(string executionId, string status, string description)
-		{
-			ExecutionRecorder recorder = new ExecutionRecorder();
-			ExecutionRecorderParams recorderParams
-				= new ExecutionRecorderParams(executionId, Host, Username, Password, TestType.Appium,
-				BaseProjectPath, TestCaseName, CurrentDevice.DeviceDetails, ErrorCount);
-			ExecutionDetails details = new ExecutionDetails();
-
-			if (executionId == Constants.UNKNOWN)
-			{
-				details.executionId = executionId;
-			}
-			else
-			{
-				//although we will be overwriting some values - try to get other details like reportKey
-				details = recorder.GetExecutionDetails(recorderParams).Result;
-			}
-
-			details.status = status;
-			details.description = description;
-			details.reason = status;
-			details.testMethodName = GetTestMethodName();
-
-			recorder.RecordExecutionRun(recorderParams, details);
 		}
 
 		private static string GetTestMethodName()
@@ -279,10 +256,10 @@ namespace VSTSDigitalDemoTests
 		{
 			var message = deviceModel + "  in Test: " + TestContext.CurrentContext.Test.Name + " had Element not found: " + nsee.Message;
 			if (shouldThrow)
-			{
-				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
-				ErrorCount++;
-				throw new NoSuchElementException(message, nsee);
+			{				
+				Console.WriteLine(message + " stacktrace: " + nsee.StackTrace);
+				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), nsee));				
+				throw nsee;
 			}
 		}
 
@@ -293,15 +270,14 @@ namespace VSTSDigitalDemoTests
 
 		protected static void HandleGeneralException(Exception e, string deviceModel, bool shouldThrow = true)
 		{
-			var message = deviceModel + " Encountered an error in : " + TestContext.CurrentContext.Test.Name + " with message: " + e.Message + "stacktrace: " + e.StackTrace;
+			var message = deviceModel + " Encountered an error in : " + TestContext.CurrentContext.Test.Name + " with message: " + e.Message;
 
-			Console.WriteLine(message);
+			Console.WriteLine(message + " stacktrace: " + e.StackTrace);
 			
 			if (shouldThrow)
-			{				
-				LogFailedDeviceExecution(GetExecutionId(DriverInstance), Constants.UNHANDLEDEX, message);
-				ErrorCount++;
-				throw new Exception();
+			{	
+				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), e));
+				throw e;
 			}
 		}
 		

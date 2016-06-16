@@ -10,11 +10,12 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
-//This code copies files and an nunit console test runner to a folder for each device 
-//that is to be tested and then kicks off the tests
-
 namespace ParallelDeviceExecutor
 {	
+	/// <summary>
+	/// This program copies files and an nunit console test runner to a folder for each 
+	/// device in a json config file that are to be tested and then kicks off the tests.
+	/// </summary>
 	public class Program
 	{		
 		private static ProcessObserver ParallelProcessObserver;
@@ -143,7 +144,7 @@ namespace ParallelDeviceExecutor
 
 			DirectoryInfo testRunDirectory = CopyTestRunner(device, currentPath, runnerPath);
 
-			CloneDeviceListFile(device, baseProjectPath, testRunDirectory);
+			CloneStripDeviceListForSingleDevice(device, baseProjectPath, testRunDirectory);
 
 			//Use the nunit3 console to run our tests
 			//arguments for nunit3 look like:
@@ -185,7 +186,7 @@ namespace ParallelDeviceExecutor
 			}
 		}
 
-		private static void CloneDeviceListFile(Device device, string baseProjectPath, DirectoryInfo testRunDirectory)
+		private static void CloneStripDeviceListForSingleDevice(Device device, string baseProjectPath, DirectoryInfo testRunDirectory)
 		{
 			//Get device group again as a separate instance as we will remove other devices
 			//	and deserialize our JSON Device configuration that will be used by each test run

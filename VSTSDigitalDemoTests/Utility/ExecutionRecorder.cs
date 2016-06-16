@@ -70,11 +70,15 @@ namespace VSTSDigitalDemoTests.Utility
 					executionDetails.reason = Constants.UNKNOWN;
 				}
 
-				if (executionDetails.status == Constants.COMPLETED && recorderParams.UnhandledErrorCount>0)
+				if (executionDetails.status == Constants.COMPLETED && recorderParams.ExecutionErrors.Count > 0)
 				{
-					var message = string.Format("Completed with {0} unhandled errors", recorderParams.UnhandledErrorCount);
+					var message = string.Format("Failed with {0} unhandled errors", recorderParams.ExecutionErrors.Count);
 					executionDetails.status = message;
 					executionDetails.description = message;
+				}
+				else if (executionDetails.status == Constants.COMPLETED && recorderParams.ExecutionErrors.Count == 0)
+				{
+					executionDetails.status = Constants.PASS;
 				}
 			}
 			return executionDetails;
@@ -177,6 +181,29 @@ namespace VSTSDigitalDemoTests.Utility
 
 					using (StreamWriter sw = File.AppendText(path))
 					{
+
+
+						foreach (ExecutionError errorItem in recorderParams.ExecutionErrors)
+						{
+							var errorLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+							details.executionId,
+							details.reportKey,
+							recorderParams.TestCaseName,
+							recorderParams.CurrentDevice.Name,
+							recorderParams.CurrentDevice.DeviceID,
+							"Unhandled Error Occurred",
+							errorItem.TestMethodName,
+							//Replace double quotes with single so we can output to CSV without it bleeding into other cells
+							"\"" + errorItem.Message.Replace("\"", "'") + " stacktrace: " 
+								+ errorItem.ExecutionException.StackTrace.Replace("\"", "'") + "\"",
+							details.reportUrl,
+							details.executionDetailsUrl);
+							sw.WriteLine(errorLine);
+						}
+
+
+
+
 						var newLine = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
 													details.executionId,
 													details.reportKey,
@@ -185,7 +212,8 @@ namespace VSTSDigitalDemoTests.Utility
 													recorderParams.CurrentDevice.DeviceID,
 													details.status,
 													details.testMethodName,
-													"\"" + details.description + "\"",
+													//Replace double quotes with single so we can output to CSV without it bleeding into other cells
+													"\"" + details.description.Replace("\"", "'") + "\"",
 													details.reportUrl,
 													details.executionDetailsUrl);
 						sw.WriteLine(newLine);

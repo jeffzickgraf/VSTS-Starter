@@ -13,5 +13,7 @@
 		internal static readonly string UNKNOWN = "Unknown";
 		internal static readonly string UNHANDLEDEX = "Unhandled Exception Encountered";
 		internal static readonly string COMPLETED = "Completed";
+		internal static readonly string PASS = "Pass";
+		internal static readonly string FAIL = "Fail";		
 	}
 }

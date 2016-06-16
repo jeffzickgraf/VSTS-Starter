@@ -57,11 +57,11 @@ namespace VSTSDigitalDemotests
 			}
 			catch (NoSuchElementException nsee)
 			{
-				HandleNoElementException(nsee, WebDriver);
+				HandleNoElementException(nsee, WebDriver, true);
 			}
 			catch (Exception e)
 			{
-				HandleGeneralException(e, WebDriver);
+				HandleGeneralException(e, WebDriver, true);
 			}
 		}
 				
@@ -90,11 +90,11 @@ namespace VSTSDigitalDemotests
 			}
 			catch (NoSuchElementException nsee)
 			{
-				HandleNoElementException(nsee, WebDriver);
+				HandleNoElementException(nsee, WebDriver, true);
 			}
 			catch (Exception e)
 			{
-				HandleGeneralException(e, WebDriver);
+				HandleGeneralException(e, WebDriver, true);
 			}
 		}
 
@@ -153,11 +153,11 @@ namespace VSTSDigitalDemotests
 			}
 			catch (NoSuchElementException nsee)
 			{
-				HandleNoElementException(nsee, WebDriver);
+				HandleNoElementException(nsee, WebDriver, true);
 			}
 			catch (Exception e)
 			{
-				HandleGeneralException(e, WebDriver);
+				HandleGeneralException(e, WebDriver, true);
 			}
 		}
 
