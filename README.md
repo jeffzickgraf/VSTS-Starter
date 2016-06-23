@@ -39,3 +39,10 @@ Additionally, you will need to provide your device identifiers in the SharedComp
     },
 ```
 
+If using VSTS or TFS to kick off the ParallelDeviceExecutor, there is a Powershell script called RunExecutor.ps1 under the ParallelDeviceExecutor folder. This can be executed while passing in the following arguments:
+param([String] $assemblies = "", [String] $baselocation="C:\a\1\s\")
+
+To call with named parameters, use the following (note: end the baselocation with a '\' at the end):
+```sh
+RunExecutor.ps1 -assemblies "Your-Target-Test-Assembly.dll, Another-Assembly.dll" -baselocation "D:\your\working\build\directory\"
+```

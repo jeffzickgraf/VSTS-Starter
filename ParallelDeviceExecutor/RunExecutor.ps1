@@ -1,16 +1,16 @@
 
-param([string] $assemblies = "")
+param([String] $assemblies = "", [String] $baselocation="C:\a\1\s\")
 $psi = New-object System.Diagnostics.ProcessStartInfo 
 $psi.CreateNoWindow = $true 
 $psi.UseShellExecute = $false 
-$psi.WorkingDirectory = 'C:\a\1\s\ParallelDeviceExecutor\bin\Release'
+$psi.WorkingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
 $psi.RedirectStandardOutput = $true 
 $psi.RedirectStandardError = $true 
-$psi.FileName = 'C:\a\1\s\ParallelDeviceExecutor\bin\Release\ParallelDeviceExecutor.exe'
+$psi.FileName = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceExecutor.exe'
 $psi.Arguments = $assemblies
 $process = New-Object System.Diagnostics.Process 
 $process.StartInfo = $psi 
-[void]$process.Start()
+$process.Start()
 $output = $process.StandardOutput.ReadToEnd() 
 $process.WaitForExit() 
 $output
