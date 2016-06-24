@@ -1,6 +1,6 @@
 ﻿#used to create an AppSettings file on the VSTS build server during a build. Takes in credentials and the cloud location
 
-param([string] $perfectoCloud = "", [string] $perfectoUsername = "", [string] $perfectoPassword = "")
+param([string] $perfectoCloud = "", [string] $perfectoUsername = "", [string] $perfectoPassword = "", [string] $isWindTunnelEnabled="true")
 
 # Create a new XML File with config root node
 [System.XML.XMLDocument]$oXMLDocument=New-Object System.XML.XMLDocument
@@ -23,6 +23,12 @@ $oXMLUser.SetAttribute("value", $perfectoUsername)
 [System.XML.XMLElement]$oXMLPassword=$oXMLRoot.appendChild($oXMLDocument.CreateElement("add"))
 $oXMLPassword.SetAttribute("key","PerfectoPassword")
 $oXMLPassword.SetAttribute("value", $perfectoPassword)
+
+# Add IsWindTunnelEnabled key 
+[System.XML.XMLElement]$oXMLWindTunnel=$oXMLRoot.appendChild($oXMLDocument.CreateElement("add"))
+$oXMLWindTunnel.SetAttribute("key","IsWindTunnelEnabled")
+$oXMLWindTunnel.SetAttribute("value", $isWindTunnelEnabled)
+
 
 # Save File
 $oXMLDocument.Save("VSTSDigitalDemoTests\appsettings.config")
