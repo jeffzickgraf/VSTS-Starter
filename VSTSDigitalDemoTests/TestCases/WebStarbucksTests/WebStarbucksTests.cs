@@ -14,6 +14,7 @@ namespace VSTSDigitalDemotests
 	/// </summary>	
 	[TestFixture]
 	[Category("WebTests")]
+	[Category("WebStarbucks")]
 	public class WebStarbucksTests : WebTestBase
 	{
 		public WebStarbucksTests()

@@ -2,6 +2,16 @@
   "devices": [
     {
       "device": {
+        "deviceID": "0615F6F16FB13932",
+        "os": "Android",
+        "name": "GalaxyS6",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "true"
+      }
+    },
+    {
+      "device": {
         "deviceID": "Win7InternetExplorer10",
         "os": "Windows",
         "osVersion": "7",
@@ -36,16 +46,6 @@
         "name": "Win8.1Chrome",
         "isDesktopBrowser": "true",
         "runNative": "false",
-        "runWeb": "true"
-      }
-    },
-    {
-      "device": {
-        "deviceID": "0615F6F16FB13932",
-        "os": "Android",
-        "name": "GalaxyS6",
-        "isDesktopBrowser": "false",
-        "runNative": "true",
         "runWeb": "true"
       }
     }, 

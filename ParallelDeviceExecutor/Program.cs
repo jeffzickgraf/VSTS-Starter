@@ -34,11 +34,20 @@ namespace ParallelDeviceExecutor
 				Trace.Listeners.Add(new TextWriterTraceListener("ParallelDeviceOutput.log", "myListener"));
 				
 				string assemblyArgs = "";
+				string whereFilter = "";
 				if (args.Length > 0)
 				{
 					foreach (string arg in args)
 					{
-						assemblyArgs += arg + " ";
+						if (arg.StartsWith("a:"))
+						{
+							assemblyArgs = arg.Substring(2);
+						}
+
+						if (arg.StartsWith("w:"))
+						{
+							whereFilter = arg.Substring(2);
+						}						
 					}
 				}
 				else
@@ -93,7 +102,7 @@ namespace ParallelDeviceExecutor
 						}
 
 						// Perform your work here.
-						RunParallelExecutions(assemblyArgs, testParams);
+						RunParallelExecutions(assemblyArgs, whereFilter, testParams);
 					}
 					finally
 					{
@@ -111,13 +120,13 @@ namespace ParallelDeviceExecutor
 			}
 		}
 
-		private static void RunParallelExecutions(string assemblyArgs, PerfectoTestParams testParams)
+		private static void RunParallelExecutions(string assemblyArgs, string whereFilter, PerfectoTestParams testParams)
 		{
 			//Execute in parallel for each device
 			Parallel.ForEach(testParams.Devices, device =>
 			{
 				Console.WriteLine("Starting runner for " + device.DeviceDetails.Name);
-				StartTestRunner(device, assemblyArgs);
+				StartTestRunner(device, assemblyArgs, whereFilter);
 			});
 
 			//Don't want to exit the program until all devices have processed and then we can release mutex
@@ -136,7 +145,7 @@ namespace ParallelDeviceExecutor
 			}
 		}
 
-		private static void StartTestRunner(Device device, string assemblyArgs)
+		private static void StartTestRunner(Device device, string assemblyArgs, string whereFilter)
 		{
 			string currentPath = Directory.GetCurrentDirectory();
 			string baseProjectPath = Path.GetFullPath(Path.Combine(currentPath, @"..\..\..\"));
@@ -151,13 +160,29 @@ namespace ParallelDeviceExecutor
 			//		your-assembly-with-test-cases.dll --result=TestRun.xml;format=nunit2 --where "cat != AppiumTests"
 			//Using format=nunit2 for VSTS compatibility (it can't process nunit3 results)
 			var arguments = assemblyArgs + " --result=TestRun.xml;format=nunit2";
-
+				
 			string toSkip = GetTestsToSkipForDevice(device);
 
-			//if device config needs to skip -add a where clause to our console argument
+			string whereOptions = string.Empty;
+
 			if (!string.IsNullOrEmpty(toSkip))
 			{
-				arguments += " --where \"" + toSkip + "\"";
+				whereOptions = toSkip;
+			}
+
+			if (!string.IsNullOrEmpty(whereFilter) && !string.IsNullOrEmpty(whereOptions))
+			{
+				whereOptions += " && " + whereFilter;
+			}
+			else if (!string.IsNullOrEmpty(whereFilter) && string.IsNullOrEmpty(whereOptions))
+			{
+				whereOptions += " " + whereFilter;
+			}
+
+			//if device config needs to skip or where filter was passed in -add a where clause to our console argument
+			if (!string.IsNullOrEmpty(whereOptions))
+			{
+				arguments += " --where \"" + whereOptions + "\"";
 			}
 
 			Console.WriteLine("About to start nunit3-console.exe with the following arguments: " + arguments);

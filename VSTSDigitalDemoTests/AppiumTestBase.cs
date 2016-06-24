@@ -6,6 +6,7 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Remote;
 using SharedComponents.Parameters;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +14,7 @@ using System.Linq;
 using VSTSDigitalDemoTests.Utility;
 
 namespace VSTSDigitalDemoTests
-{	
+{
 	public abstract class AppiumTestBase
 	{
 		protected static PerfectoTestParams PerfectoTestingParameters;
@@ -26,6 +27,7 @@ namespace VSTSDigitalDemoTests
 		protected static string Username;
 		protected static string Password;
 		protected static List<ExecutionError> ExecutionErrors;
+		private static ArrayList startedVitals = new ArrayList();
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -65,8 +67,8 @@ namespace VSTSDigitalDemoTests
 				capabilities.SetCapability("deviceName", CurrentDevice.DeviceDetails.DeviceID);
 				capabilities.SetCapability("scriptName", "Parallel-" + TestCaseName);
 
-				capabilities.SetCapability("windTunnelPersona", "Georgia");
-
+				if(AppSettingsRetriever.IsWindTunnelEnabled())				
+					capabilities.SetCapability("windTunnelPersona", "Georgia");
 
 				var url = new Uri(string.Format("http://{0}/nexperience/perfectomobile/wd/hub", Host));
 				if (CurrentDevice.DeviceDetails.OS.ToUpperInvariant() == "IOS")
@@ -81,10 +83,16 @@ namespace VSTSDigitalDemoTests
 				{
 					throw new ArgumentException("Unknown Device OS from config file: " + CurrentDevice.DeviceDetails.OS);
 				}
+
+				startedVitals.Add("outputs.monitors.cpu.total");
+				startedVitals.Add("outputs.monitors.memory.used");
+				StartVitals(1, startedVitals);
+
 				DriverInstance.Context = "NATIVE_APP";
 				CloseApp();
 				OpenApp();
 				DriverInstance.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
+				
 				return DriverInstance;
 			}
 			catch (Exception ex)
@@ -152,6 +160,7 @@ namespace VSTSDigitalDemoTests
 				//get our model and executionId before we close driver
 				model = GetDeviceModel(driver);
 				String executionId = GetExecutionId(driver);
+				StopStartedVitals();
 				driver.Close();
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
@@ -357,6 +366,48 @@ namespace VSTSDigitalDemoTests
 		{
 			return CurrentDevice.DeviceDetails.OS.ToUpper() == Constants.ANDROID;
 		}
+		
+		private static void StartVitals(long interval, ArrayList vitals)
+		{
+			String command = "mobile:monitor:start";
+			Dictionary<string,object> execParams = new Dictionary<string, object>();
+			List<String> vitalsList = new List<String>();
+			foreach (String vital in vitals)
+			{
+				vitalsList.Add(vital);
+			}
+			execParams.Add("vitals", vitalsList);
+			execParams.Add("interval", interval.ToString());
+			DriverInstance.ExecuteScript(command, execParams);
+		}
 
+		private static void StopVitals(List<String> vitals)
+		{
+			String command = "mobile:monitor:stop";
+			Dictionary<string, object> execParams = new Dictionary<string, object>();
+			List<String> vitalsList = new List<String>();
+			foreach (String vital in vitals)
+			{
+				vitalsList.Add(vital);
+			}
+			execParams.Add("vitals", vitalsList);
+			DriverInstance.ExecuteScript(command, execParams);
+			foreach (String vital in vitals)
+			{
+				startedVitals.Remove(vital);
+			}
+		}
+
+		private static void StopStartedVitals()
+		{
+			if (startedVitals.Count > 0)
+			{
+				String command = "mobile:monitor:stop";
+				Dictionary<string, object> execParams = new Dictionary<string, object>();
+				execParams.Add("vitals", startedVitals);
+				DriverInstance.ExecuteScript(command, execParams);
+				startedVitals.Clear();
+			}
+		}
 	}
 }

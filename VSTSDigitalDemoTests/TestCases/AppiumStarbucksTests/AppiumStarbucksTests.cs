@@ -11,6 +11,7 @@ namespace VSTSDigitalDemoTests.TestCases.AppiumStarbucksTests
 	/// </summary>
 	[TestFixture]
 	[Category("AppiumTests")]
+	[Category("AppiumStarbucks")]
 	public class AppiumStarbucksTests : AppiumTestBase
 	{
 		public AppiumStarbucksTests()

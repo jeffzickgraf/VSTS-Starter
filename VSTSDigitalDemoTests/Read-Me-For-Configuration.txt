@@ -11,4 +11,5 @@ ____________________________________________________________________________
 		<add key="PerfectoCloud" value="YOUR-CLOUD"/> 		<!--e.g. demo.PerfectoMobile.com -->
 		<add key="PerfectoUsername" value="YOUR-USERNAME"/> <!--e.g. scottp@PerfectoMobile.com -->
 		<add key="PerfectoPassword" value="YOUR-PASSWORD"/>		
+		<add key="IsWindTunnelEnabled" value="true"/> <!-- if you have access to wind tunnel set to true, otherwise false. -->
 </appSettings>

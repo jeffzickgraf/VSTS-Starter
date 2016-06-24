@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using VSTSDigitalDemoTests.Utility;
 using NUnit.Framework;
+using System.Collections;
 
 namespace VSTSDigitalDemoTests
 {
@@ -23,6 +24,7 @@ namespace VSTSDigitalDemoTests
 		protected static string Password;
 		protected static RemoteWebDriverExtended DriverInstance;		
 		protected static List<ExecutionError> ExecutionErrors;
+		private static ArrayList startedVitals = new ArrayList();
 
 		/// <summary>
 		/// To be called from concrete test fixtures to initialize the test run.
@@ -80,14 +82,20 @@ namespace VSTSDigitalDemoTests
 				{
 					capabilities.SetCapability("deviceName", CurrentDevice.DeviceDetails.DeviceID);
 
-					//WindTunnel only for devices
-					capabilities.SetCapability("windTunnelPersona", "Georgia");
+					//WindTunnel only for devices and only when available
+					if (AppSettingsRetriever.IsWindTunnelEnabled())
+						capabilities.SetCapability("windTunnelPersona", "Georgia");
 				}
 
 				var url = new Uri(string.Format("https://{0}/nexperience/perfectomobile/wd/hub", Host));
 				RemoteWebDriverExtended driver = new RemoteWebDriverExtended(url, capabilities, new TimeSpan(0, 2, 0));
 				driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(15));
 				DriverInstance = driver;
+
+				startedVitals.Add("outputs.monitors.cpu.total");
+				startedVitals.Add("outputs.monitors.memory.used");
+				StartVitals(1, startedVitals);				
+				
 				return driver;
 			}
 			catch (Exception e)
@@ -128,8 +136,10 @@ namespace VSTSDigitalDemoTests
 				//get our model before we close driver
 				model = GetDeviceModel(driver);
 
-				//get device execution identifier
+				//get device execution identifier and stop vitals
 				String executionId = GetExecutionId(driver);
+				StopStartedVitals();
+
 				driver.Close();
 
 				Dictionary<String, Object > param = new Dictionary<String, Object>();
@@ -328,6 +338,49 @@ namespace VSTSDigitalDemoTests
 			}
 
 			return true;
+		}
+
+		private static void StartVitals(long interval, ArrayList vitals)
+		{
+			String command = "mobile:monitor:start";
+			Dictionary<string, object> execParams = new Dictionary<string, object>();
+			List<String> vitalsList = new List<String>();
+			foreach (String vital in vitals)
+			{
+				vitalsList.Add(vital);
+			}
+			execParams.Add("vitals", vitalsList);
+			execParams.Add("interval", interval.ToString());
+			DriverInstance.ExecuteScript(command, execParams);
+		}
+
+		private static void StopVitals(List<String> vitals)
+		{
+			String command = "mobile:monitor:stop";
+			Dictionary<string, object> execParams = new Dictionary<string, object>();
+			List<String> vitalsList = new List<String>();
+			foreach (String vital in vitals)
+			{
+				vitalsList.Add(vital);
+			}
+			execParams.Add("vitals", vitalsList);
+			DriverInstance.ExecuteScript(command, execParams);
+			foreach (String vital in vitals)
+			{
+				startedVitals.Remove(vital);
+			}
+		}
+
+		private static void StopStartedVitals()
+		{
+			if (startedVitals.Count > 0)
+			{
+				String command = "mobile:monitor:stop";
+				Dictionary<string, object> execParams = new Dictionary<string, object>();
+				execParams.Add("vitals", startedVitals);
+				DriverInstance.ExecuteScript(command, execParams);
+				startedVitals.Clear();
+			}
 		}
 
 	}

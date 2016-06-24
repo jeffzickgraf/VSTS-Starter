@@ -2,13 +2,14 @@
 
 This project requires the use of Visual Studio 2015 or Visual Studio 2013.
 
-This project requires the consumer to add an appsettings.config file next to the app.config file that will contain your credentials and target Perfecto cloud. The filename appsettings.config has been added to the .gitignore file to prevent credentials from being accidently committed to source control.
+This project requires the consumer to add an appsettings.config file next to the app.config file that will contain your credentials, the target Perfecto cloud, and whether wind tunnel is enabled. The filename appsettings.config has been added to the .gitignore file to prevent credentials from being accidently committed to source control.
 
 ```sh
 <appSettings>
 		<add key="PerfectoCloud" value="YOUR-CLOUD"/> 
 		<add key="PerfectoUsername" value="YOUR-USERNAME"/>
 		<add key="PerfectoPassword" value="YOUR-PASSWORD"/>		
+		<add key="IsWindTunnelEnabled" value="true"/> <!-- if you have access to wind tunnel set to true, otherwise false. -->
 </appSettings>
 ```
 
@@ -40,9 +41,9 @@ Additionally, you will need to provide your device identifiers in the SharedComp
 ```
 
 If using VSTS or TFS to kick off the ParallelDeviceExecutor, there is a Powershell script called RunExecutor.ps1 under the ParallelDeviceExecutor folder. This can be executed while passing in the following arguments:
-param([String] $assemblies = "", [String] $baselocation="C:\a\1\s\")
+param([String] $assemblies = "", [String] $wherestatement="", [String] $baselocation="C:\a\1\s\")
 
 To call with named parameters, use the following (note: end the baselocation with a '\' at the end):
 ```sh
-RunExecutor.ps1 -assemblies "Your-Target-Test-Assembly.dll, Another-Assembly.dll" -baselocation "D:\your\working\build\directory\"
+RunExecutor.ps1 -assemblies "Your-Target-Test-Assembly.dll, Another-Assembly.dll" -wherestatement "cat = WebStarbucksTests" -baselocation "D:\your\working\build\directory\"
 ```
