@@ -37,7 +37,7 @@ namespace ParallelDeviceExecutor
 				string whereFilter = "";
 				if (args.Length > 0)
 				{
-					Console.WriteLine("arguments are: " + string.Join(",", args));
+					Console.WriteLine("arguments are: " + string.Join("", args));
 
 					foreach (string arg in args)
 					{
