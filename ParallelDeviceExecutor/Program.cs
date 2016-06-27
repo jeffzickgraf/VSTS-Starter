@@ -172,7 +172,7 @@ namespace ParallelDeviceExecutor
 
 			if (!string.IsNullOrEmpty(whereFilter) && !string.IsNullOrEmpty(whereOptions))
 			{
-				whereOptions += " && " + whereFilter;
+				whereOptions += " and " + whereFilter;
 			}
 			else if (!string.IsNullOrEmpty(whereFilter) && string.IsNullOrEmpty(whereOptions))
 			{
