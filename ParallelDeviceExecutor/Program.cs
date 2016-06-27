@@ -37,6 +37,8 @@ namespace ParallelDeviceExecutor
 				string whereFilter = "";
 				if (args.Length > 0)
 				{
+					Console.WriteLine("arguments are: " + string.Join(",", args));
+
 					foreach (string arg in args)
 					{
 						if (arg.StartsWith("a:"))
@@ -46,9 +48,7 @@ namespace ParallelDeviceExecutor
 
 						if (arg.StartsWith("w:"))
 						{
-							whereFilter = arg.Substring(2);
-
-							Console.WriteLine(string.Format("wherestatement passed in is {0}", arg));
+							whereFilter = arg.Substring(2);							
 						}						
 					}
 				}
