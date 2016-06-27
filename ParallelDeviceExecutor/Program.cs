@@ -47,6 +47,8 @@ namespace ParallelDeviceExecutor
 						if (arg.StartsWith("w:"))
 						{
 							whereFilter = arg.Substring(2);
+
+							Console.WriteLine(string.Format("wherestatement passed in is {0}", arg));
 						}						
 					}
 				}
@@ -182,7 +184,8 @@ namespace ParallelDeviceExecutor
 			//if device config needs to skip or where filter was passed in -add a where clause to our console argument
 			if (!string.IsNullOrEmpty(whereOptions))
 			{
-				arguments += " --where \"" + whereOptions + "\"";
+				const string quote = "\"";
+				arguments += " --where " + quote + whereOptions + quote;
 			}
 
 			Console.WriteLine("About to start nunit3-console.exe with the following arguments: " + arguments);
