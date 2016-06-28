@@ -7,7 +7,7 @@ $psi.WorkingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
 $psi.RedirectStandardOutput = $true 
 $psi.RedirectStandardError = $true 
 $psi.FileName = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceExecutor.exe'
-$psi.Arguments ="a:$assemblies w:$wherestatement" # "a:" + $assemblies + "w:$wherestatement"
+$psi.Arguments ="a:$assemblies" "w:$wherestatement"
 $process = New-Object System.Diagnostics.Process 
 $process.StartInfo = $psi 
 $process.Start()
