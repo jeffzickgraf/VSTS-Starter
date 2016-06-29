@@ -2,4 +2,4 @@ param([String] $assemblies = "", [String] $wherestatement="", [String] $baseloca
 
 $filePath = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceExecutor.exe'
 $workingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
-Start-Process -FilePath $filePath -Args "a:$assemblies", "w:$wherestatement" -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
+Start-Process -FilePath $filePath -Args "a:"$assemblies, "w:"$wherestatement -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
