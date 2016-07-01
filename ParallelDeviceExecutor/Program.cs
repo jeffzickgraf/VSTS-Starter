@@ -39,7 +39,7 @@ namespace ParallelDeviceExecutor
 				{
 					var joinedArgs = string.Join(" ", args);
 					Console.WriteLine("arguments are: " + joinedArgs);
-					Console.WriteLine("split and joined is: " + string.Join(" ",joinedArgs.Split('^'));
+					Console.WriteLine("split and joined is: " + string.Join(" ",joinedArgs.Split('^')));
 
 					foreach (string arg in args)
 					{
