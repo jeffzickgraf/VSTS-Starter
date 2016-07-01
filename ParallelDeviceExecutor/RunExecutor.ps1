@@ -4,4 +4,4 @@ $filePath = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceEx
 $workingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
 $arguments = "a:" + $assemblies + " w:" + $wherestatement
 #& C:\Users\jeffz\Source\Playground\arguments\EchoArgs.exe "a:$assemblies", "w:$wherestatement" 
-Start-Process -FilePath $filePath -Args "a:$assemblies", "w:$wherestatement" -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
+& -FilePath $filePath -Args "a:$assemblies", "w:$wherestatement" -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
