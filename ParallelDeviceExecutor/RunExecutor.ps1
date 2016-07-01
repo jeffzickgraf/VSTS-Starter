@@ -2,7 +2,7 @@ param([String] $assemblies = "", [String] $wherestatement="", [String] $baseloca
 
 $filePath = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceExecutor.exe'
 $workingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
-$arguments = "a:$assemblies" + "|w:" + $wherestatement
+$arguments = "a:$assemblies" + "^w:" + $wherestatement
 echo "aguments in ps are: " + $arguments
-#& C:\Users\jeffz\Source\Playground\arguments\EchoArgs.exe $arguments
-Start-Process -FilePath $filePath -Args $arguments -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
+& C:\Users\jeffz\Source\Playground\arguments\EchoArgs.exe $arguments
+#Start-Process -FilePath $filePath -Args $arguments -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
