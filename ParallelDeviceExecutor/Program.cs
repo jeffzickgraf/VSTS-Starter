@@ -39,7 +39,7 @@ namespace ParallelDeviceExecutor
 				 * when there are spaces in the arguments, they split up the where statment. 
 				 * Need to do some special handling to get around this. Using an "^" to split incoming args
 				 * 
-				 * Expecting possiblity of: a:TheTestAssembly.dll^w:'category==xyz AND category==123'
+				 * Expecting possiblity of: a:TheTestAssembly.dll^w:category==xyz AND category==123
 				 */
 				var joinedArgs = string.Join(" ", args);
 				Console.WriteLine("arguments are: " + joinedArgs);
