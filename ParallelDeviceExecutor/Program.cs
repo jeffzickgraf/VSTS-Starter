@@ -79,7 +79,9 @@ namespace ParallelDeviceExecutor
 				if (testParams.Devices.Count < 0)
 				{
 					Console.WriteLine("No devices found from JSON config file.");
+#if DEBUG
 					Console.ReadKey();
+#endif
 					return;
 				}
 
@@ -129,7 +131,9 @@ namespace ParallelDeviceExecutor
 			catch (Exception ex)
 			{
 				Console.WriteLine("Error: " + ex.Message);
+#if DEBUG
 				Console.ReadKey();
+#endif
 				throw;
 			}
 		}
