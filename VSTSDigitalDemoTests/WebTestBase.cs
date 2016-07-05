@@ -269,14 +269,9 @@ namespace VSTSDigitalDemoTests
 			if (shouldThrow)
 			{
 				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), e));
-				if (e != null)
-				{
-
-					throw e;
-				}
-				else {
-					throw new Exception("model: " + model + " " +message);
-				}
+				//Having odd behavior of null reference exception
+				//Wrapping with new ex to be able to record the device model
+				throw new Exception("model: " + model + " " + message, e);
 			}
 				
 		}
