@@ -32,16 +32,24 @@ namespace ParallelDeviceExecutor
 				ParallelProcessObserver = new ProcessObserver();
 
 				Trace.Listeners.Add(new TextWriterTraceListener("ParallelDeviceOutput.log", "myListener"));
-				
+
+
+				/*Args Note:
+				 * Having difficulty sending in separated args from Powershell
+				 * when there are spaces in the arguments, they split up the where statment. 
+				 * Need to do some special handling to get around this. Using an "^" to split incoming args
+				 * 
+				 * Expecting possiblity of: a:TheTestAssembly.dll^w:'category==xyz AND category==123'
+				 */
+				var joinedArgs = string.Join(" ", args);
+				Console.WriteLine("arguments are: " + joinedArgs);
+				var argsSplit = joinedArgs.Split('^');
+
 				string assemblyArgs = "";
 				string whereFilter = "";
-				if (args.Length > 0)
+				if (argsSplit.Length > 0)
 				{
-					var joinedArgs = string.Join(" ", args);
-					Console.WriteLine("arguments are: " + joinedArgs);
-					Console.WriteLine("split and joined is: " + string.Join(" ",joinedArgs.Split('^')));
-
-					foreach (string arg in args)
+					foreach (string arg in argsSplit)
 					{
 						Console.WriteLine("Reading Arg:" + arg);
 
