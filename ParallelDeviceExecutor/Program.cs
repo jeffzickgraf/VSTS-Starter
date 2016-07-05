@@ -43,6 +43,8 @@ namespace ParallelDeviceExecutor
 
 					foreach (string arg in args)
 					{
+						Console.WriteLine("Reading Arg:" + arg);
+
 						if (arg.StartsWith("a:"))
 						{
 							assemblyArgs = arg.Substring(2);

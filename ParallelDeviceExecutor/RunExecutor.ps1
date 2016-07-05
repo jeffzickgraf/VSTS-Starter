@@ -4,5 +4,4 @@ $filePath = $baselocation + 'ParallelDeviceExecutor\bin\Release\ParallelDeviceEx
 $workingDirectory = $baselocation + 'ParallelDeviceExecutor\bin\Release'
 $arguments = "a:$assemblies" + "^w:" + $wherestatement
 echo "aguments in ps are: " + $arguments
-& C:\Users\jeffz\Source\Playground\arguments\EchoArgs.exe $arguments
-#Start-Process -FilePath $filePath -Args $arguments -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
+Start-Process -FilePath $filePath -Args $arguments -NoNewWindow -PassThru -Wait -WorkingDirectory $workingDirectory
