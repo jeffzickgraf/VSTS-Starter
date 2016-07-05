@@ -269,7 +269,14 @@ namespace VSTSDigitalDemoTests
 			if (shouldThrow)
 			{
 				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), e));
-				throw e; 
+				if (e != null)
+				{
+
+					throw e;
+				}
+				else {
+					throw new Exception("model: " + model + " " +message);
+				}
 			}
 				
 		}
