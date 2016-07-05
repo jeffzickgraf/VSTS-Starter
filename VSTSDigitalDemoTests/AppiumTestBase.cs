@@ -268,7 +268,7 @@ namespace VSTSDigitalDemoTests
 			{				
 				Console.WriteLine(message + " stacktrace: " + nsee.StackTrace);
 				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), nsee));				
-				throw nsee;
+				throw new NoSuchElementException(message, nsee);
 			}
 		}
 
@@ -286,7 +286,7 @@ namespace VSTSDigitalDemoTests
 			if (shouldThrow)
 			{	
 				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), e));
-				throw e;
+				throw new Exception(message, e);
 			}
 		}
 		

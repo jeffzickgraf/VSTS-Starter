@@ -250,7 +250,7 @@ namespace VSTSDigitalDemoTests
 			if (shouldThrow)
 			{
 				ExecutionErrors.Add(new ExecutionError(message, GetTestMethodName(), nsee));
-				throw nsee;
+				throw new NoSuchElementException(message, nsee);
 			}			
 		}
 		
