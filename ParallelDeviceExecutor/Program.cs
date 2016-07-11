@@ -296,7 +296,7 @@ namespace ParallelDeviceExecutor
 		private static DirectoryInfo CopyTestRunner(Device device, string currentPath, string runnerPath)
 		{
 			//Make folder
-			DirectoryInfo testRunDirectory = Directory.CreateDirectory(runnerPath + @"\TestRuns\" + device.DeviceDetails.Name);
+			DirectoryInfo testRunDirectory = Directory.CreateDirectory(runnerPath + @"\TestRuns\" + device.DeviceDetails.Name + device.DeviceDetails.DeviceID);
 
 			//Copy only the test runner first - there are possibly previous run directories so don't copy that folder
 			DirectoryCopy(runnerPath, testRunDirectory.FullName, false);
