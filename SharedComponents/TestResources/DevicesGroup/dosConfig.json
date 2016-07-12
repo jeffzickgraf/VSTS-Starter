@@ -1,0 +1,34 @@
+﻿{
+  "devices": [
+    {
+      "device": {
+        "deviceID": "6ADA654C1B55FCB87C0FF0808E29E2B3867871E0",
+        "os": "iOS",
+        "name": "iPhone-6S Plus",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "false"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "8F46591E26620649A03F66F3693FC3DBC719F01F",
+        "os": "iOS",
+        "name": "iPhone-6 Plus",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "false"
+      }
+    },
+    {
+      "device": {
+        "deviceID": "EBB620E023B3FA0A72CAF31B46A21A51213C590E",
+        "os": "iOS",
+        "name": "iPhone-6",
+        "isDesktopBrowser": "false",
+        "runNative": "true",
+        "runWeb": "false"
+      }
+    }
+  ]
+}
