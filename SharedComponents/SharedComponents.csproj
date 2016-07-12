@@ -69,6 +69,7 @@
   <ItemGroup>
     <None Include="TestResources\DevicesGroup\AndroidConfig.json" />
     <None Include="TestResources\DevicesGroup\IOSOnlyConfig.json" />
+    <None Include="TestResources\DevicesGroup\previousConfig.json" />
     <None Include="TestResources\DevicesGroup\PhoneOnlyConfig.json" />
     <None Include="TestResources\DevicesGroup\PerfectoConfigExe.json" />
   </ItemGroup>
