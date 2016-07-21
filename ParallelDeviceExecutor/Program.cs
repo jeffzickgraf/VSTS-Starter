@@ -150,7 +150,7 @@ namespace ParallelDeviceExecutor
 			//Don't want to exit the program until all devices have processed and then we can release mutex
 			do
 			{
-				Thread.Sleep(5000);
+				Thread.Sleep(10000);
 				Console.WriteLine(" --> Processing ... NUnit Runner count is: {0}", ParallelProcessObserver.GetStillRunningProcessCount());
 			}
 			while (getParallelCount() > 0);
