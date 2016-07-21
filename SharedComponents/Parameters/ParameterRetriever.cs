@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace SharedComponents.Parameters
 {
+	/// <summary>
+	/// Retrieves device parameters from a JSON config file.
+	/// </summary>
 	public class ParameterRetriever
 	{
 		public PerfectoTestParams GetVSOExecParam(string baseProjectPath = "", bool UseBuildDropFolder = true)
@@ -43,19 +43,13 @@ namespace SharedComponents.Parameters
 					finalResolutionPath = baseProjectPath +  SharedConstants.DeviceConfigFileName;
 
 					Console.WriteLine("VSTS file not found - pulling from: " + finalResolutionPath);
-				}			
-				
-				using (StreamReader jsonConfigFile = File.OpenText(finalResolutionPath))
-				using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(jsonConfigFile.ReadToEnd())))
+				}							
+
+				//Deserialize params file
+				using (StreamReader jsonConfigFile = File.OpenText(finalResolutionPath))				
 				{
-					DataContractJsonSerializerSettings settings =
-							new DataContractJsonSerializerSettings();
-					settings.UseSimpleDictionaryFormat = true;
-
-					DataContractJsonSerializer serializer =
-							new DataContractJsonSerializer(typeof(PerfectoTestParams), settings);
-
-					testParams = (PerfectoTestParams)serializer.ReadObject(ms);					
+					JsonSerializer serializer = new JsonSerializer();
+					testParams = (PerfectoTestParams)serializer.Deserialize(jsonConfigFile, typeof(PerfectoTestParams));
 				}
 			}
 			catch (Exception e)

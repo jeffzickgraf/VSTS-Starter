@@ -1,17 +1,17 @@
-﻿using SharedComponents;
+﻿using Newtonsoft.Json;
+using SharedComponents;
 using SharedComponents.Parameters;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ParallelDeviceExecutor
-{	
+{
 	/// <summary>
 	/// This program copies files and an nunit console test runner to a folder for each 
 	/// device in a json config file that are to be tested and then kicks off the tests.
@@ -243,17 +243,16 @@ namespace ParallelDeviceExecutor
 			//Add our run identifier to the device details
 			testParams.Devices.FirstOrDefault(d => d.DeviceDetails.DeviceID == device.DeviceDetails.DeviceID).DeviceDetails.RunIdentifier = RunIdentifier;
 
-			//Now save to memory and then a filestream to disk
-			MemoryStream memoryStream = new MemoryStream();
-			DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(PerfectoTestParams));
-			serializer.WriteObject(memoryStream, testParams);
-
+			//Now save to disk
+			JsonSerializer serializer = new JsonSerializer();
+			
 			Console.WriteLine("Writing config file for " + device.DeviceDetails.Name ?? device.DeviceDetails.DeviceID);
 			var runConfigPath = testRunDirectory.FullName + "\\TestResources\\DevicesGroup\\" + SharedConstants.DeviceConfigFileName;
 			Directory.CreateDirectory(Path.GetDirectoryName(runConfigPath));
-			using (FileStream fileStream = new FileStream(runConfigPath, FileMode.Create, FileAccess.Write))
+			using (StreamWriter fileStream = new StreamWriter(runConfigPath,false))
+			using(JsonWriter writer = new JsonTextWriter(fileStream))
 			{
-				memoryStream.WriteTo(fileStream);
+				serializer.Serialize(writer, testParams);				
 			}
 		}
 
