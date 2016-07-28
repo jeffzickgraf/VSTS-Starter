@@ -77,6 +77,7 @@ namespace SharedComponents.Parameters
 				string browserName = string.Empty;
 				string browserVersion = string.Empty;
 				string name = string.Empty;
+				string runIdentifier = string.Empty;
 				bool isDesktopBrowser = false;
 				bool runNative = false;
 				bool runWeb = false;
@@ -105,6 +106,9 @@ namespace SharedComponents.Parameters
 						case "name":
 							name = prop.Value.ToString();
 							break;
+						case "runIdentifier":
+							runIdentifier = prop.Value.ToString();
+							break;
 						case "isDesktopBrowser":
 							isDesktopBrowser = (bool)prop.Value;
 							break;
@@ -123,6 +127,7 @@ namespace SharedComponents.Parameters
 				Device device = new Device();
 				device.DeviceDetails = new DeviceDetails(deviceID, os, osVersion, name, browserName,
 						browserVersion, isDesktopBrowser, runNative, runWeb);
+				device.DeviceDetails.RunIdentifier = runIdentifier;
 				devices.Add(device);
 			}
 		}
