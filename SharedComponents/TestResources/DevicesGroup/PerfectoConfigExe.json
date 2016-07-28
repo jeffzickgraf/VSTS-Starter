@@ -1,16 +1,6 @@
 
 {
-  "devices": [
-    {
-      "device": {
-        "deviceID": "0615F6F16FB13932",
-        "os": "Android",
-        "name": "GalaxyS6",
-        "isDesktopBrowser": "false",
-        "runNative": "true",
-        "runWeb": "true"
-      }
-    },
+  "devices": [    
     {
       "device": {
         "deviceID": "Win7InternetExplorer10",
