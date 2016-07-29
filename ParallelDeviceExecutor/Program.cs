@@ -150,7 +150,7 @@ namespace ParallelDeviceExecutor
 			//Don't want to exit the program until all devices have processed and then we can release mutex
 			do
 			{
-				Thread.Sleep(10000);
+				Thread.Sleep(15000);
 				Console.WriteLine(" --> Processing ... NUnit Runner count is: {0}", ParallelProcessObserver.GetStillRunningProcessCount());
 			}
 			while (getParallelCount() > 0);
@@ -233,7 +233,7 @@ namespace ParallelDeviceExecutor
 		private static void CloneStripDeviceListForSingleDevice(Device device, string baseProjectPath, DirectoryInfo testRunDirectory)
 		{
 			//Get device group again as a separate instance as we will remove other devices
-			//	and deserialize our JSON Device configuration that will be used by each test run
+			//	and serialize our JSON Device configuration that will be used by each test run
 			ParameterRetriever retriever = new ParameterRetriever();
 			PerfectoTestParams testParams = retriever.GetVSOExecParam(baseProjectPath, true);
 

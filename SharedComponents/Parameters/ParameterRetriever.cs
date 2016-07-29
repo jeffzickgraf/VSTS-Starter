@@ -48,7 +48,7 @@ namespace SharedComponents.Parameters
 		private static void InflateDeviceList(List<Device> devices, string finalResolutionPath)
 		{
 			/*
-			* Jeff Zickgraf's HACK Note:
+			* Jeff Zickgraf's TFS Workaround Note (7/28/2016):
 			*
 			* Previous code was nice and simple:
 			*	using (StreamReader jsonConfigFile = File.OpenText(finalResolutionPath))				
