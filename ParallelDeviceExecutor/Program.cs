@@ -43,11 +43,11 @@ namespace ParallelDeviceExecutor
 				 */
 				var joinedArgs = string.Join(" ", args);
 				Console.WriteLine("arguments are: " + joinedArgs);
-				var argsSplit = joinedArgs.Split('^');
+				var argsSplit = string.IsNullOrWhiteSpace(joinedArgs) ? null : joinedArgs.Split('^');
 
 				string assemblyArgs = "";
 				string whereFilter = "";
-				if (argsSplit.Length > 0)
+				if (argsSplit != null && argsSplit.Length > 0)
 				{
 					foreach (string arg in argsSplit)
 					{
