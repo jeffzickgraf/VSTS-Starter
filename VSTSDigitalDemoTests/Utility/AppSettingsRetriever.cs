@@ -21,7 +21,7 @@ namespace VSTSDigitalDemoTests.Utility
 			}
 			catch (Exception)
 			{
-				return true;
+				return false;
 			}			
 		}
 	}
